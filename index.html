@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>VOA Executive Console</title>
+<title>VOA Admin Panel</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:        #f6fafb;
+  --bg:        #faf8ff;
   --bg2:       #ffffff;
-  --bg3:       #eef4f7;
+  --bg3:       #f3f0ff;
   --card:      #ffffff;
-  --border:    #deeaee;
-  --border2:   #c8dde4;
-  --accent:    #0891b2;
-  --accent-lt: #ecfeff;
-  --accent-dk: #0e7490;
-  --accent-md: #06b6d4;
+  --border:    #e5e0f8;
+  --border2:   #cfc8f0;
+  --accent:    #7c3aed;
+  --accent-lt: #f5f3ff;
+  --accent-md: #8b5cf6;
+  --accent-dk: #6d28d9;
   --blue:      #3b82f6;
   --blue-lt:   #eff6ff;
   --green:     #16a34a;
@@ -25,16 +25,16 @@
   --red-lt:    #fef2f2;
   --amber:     #d97706;
   --amber-lt:  #fffbeb;
-  --purple:    #7c3aed;
-  --purple-lt: #f5f3ff;
-  --teal:      #0d9488;
-  --teal-lt:   #f0fdfa;
-  --text:      #0c1e26;
-  --text2:     #3d5a65;
-  --text3:     #8aacb8;
-  --shadow-sm: 0 1px 3px rgba(8,145,178,.06), 0 1px 2px rgba(0,0,0,.04);
-  --shadow:    0 4px 16px rgba(8,145,178,.1);
-  --shadow-lg: 0 8px 32px rgba(8,145,178,.14);
+  --cyan:      #0891b2;
+  --cyan-lt:   #ecfeff;
+  --orange:    #f97316;
+  --orange-lt: #fff4ed;
+  --text:      #1a0f3c;
+  --text2:     #4c3d7a;
+  --text3:     #9b8ec4;
+  --shadow-sm: 0 1px 3px rgba(124,58,237,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow:    0 4px 16px rgba(124,58,237,.1);
+  --shadow-lg: 0 8px 32px rgba(124,58,237,.14);
   --radius:    14px;
   --font-head: 'Sora', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
@@ -55,13 +55,13 @@ body{ background:var(--bg); color:var(--text); font-family:var(--font-body); min
   width:36px; height:36px; background:var(--accent); border-radius:10px;
   display:flex; align-items:center; justify-content:center;
   font-family:var(--font-head); font-weight:800; font-size:13px; color:#fff;
-  box-shadow:0 2px 8px rgba(8,145,178,.3);
+  box-shadow:0 2px 8px rgba(124,58,237,.3);
 }
 .brand-name{ font-family:var(--font-head); font-size:17px; font-weight:700; color:var(--text); }
 .brand-role{
   font-family:var(--font-mono); font-size:10px; color:var(--accent);
   background:var(--accent-lt); padding:3px 9px; border-radius:20px;
-  border:1px solid rgba(8,145,178,.2); letter-spacing:.5px;
+  border:1px solid rgba(124,58,237,.2); letter-spacing:.5px;
 }
 .staff-badge{
   font-family:var(--font-mono); font-size:11px; color:var(--text2);
@@ -74,33 +74,16 @@ body{ background:var(--bg); color:var(--text); font-family:var(--font-body); min
 }
 .logout-btn:hover{ color:var(--red); border-color:var(--red); background:var(--red-lt); }
 
-/* ── TAB NAV ── */
-.tab-nav{
-  display:flex; background:var(--bg2);
-  border-bottom:1px solid var(--border);
-  position:sticky; top:58px; z-index:90;
-  box-shadow:var(--shadow-sm);
-}
-.tab-btn{
-  flex:1; padding:13px 8px; border:none; background:none;
-  font-family:var(--font-head); font-size:13px; font-weight:600;
-  color:var(--text3); cursor:pointer; letter-spacing:.3px;
-  border-bottom:2px solid transparent; transition:all .2s;
-}
-.tab-btn.active{ color:var(--accent); border-bottom-color:var(--accent); }
-.tab-page{ display:none; }
-.tab-page.active{ display:block; }
-
 /* ── LOGIN ── */
 .login-screen{
   min-height:100vh; display:flex; align-items:center; justify-content:center;
-  background:linear-gradient(145deg, #ecfeff 0%, #f6fafb 50%, #fff 100%);
+  background:linear-gradient(145deg, #f5f3ff 0%, #faf8ff 55%, #fff 100%);
   padding:24px;
 }
 .login-card{
   background:var(--card); border:1px solid var(--border);
   border-radius:24px; padding:44px 36px;
-  width:100%; max-width:390px;
+  width:100%; max-width:400px;
   box-shadow:var(--shadow-lg); animation:fadeUp .4s ease;
 }
 @keyframes fadeUp{ from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
@@ -111,7 +94,7 @@ body{ background:var(--bg); color:var(--text); font-family:var(--font-body); min
   border-radius:20px;
   display:flex; align-items:center; justify-content:center;
   font-family:var(--font-head); font-weight:800; font-size:26px; color:#fff;
-  box-shadow:0 8px 28px rgba(8,145,178,.28);
+  box-shadow:0 8px 28px rgba(124,58,237,.28);
 }
 .login-title{ font-family:var(--font-head); font-size:24px; font-weight:700; color:var(--text); }
 .login-sub{ font-size:13px; color:var(--text3); text-align:center; }
@@ -123,16 +106,16 @@ body{ background:var(--bg); color:var(--text); font-family:var(--font-body); min
   font-family:var(--font-body); font-size:15px; outline:none;
   transition:all .2s; -webkit-appearance:none;
 }
-.form-input:focus,.form-select:focus{ border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px rgba(8,145,178,.1); }
+.form-input:focus,.form-select:focus{ border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px rgba(124,58,237,.1); }
 .btn-login{
   width:100%; padding:15px;
   background:linear-gradient(135deg, var(--accent-md), var(--accent-dk));
   border:none; border-radius:14px; color:#fff;
   font-family:var(--font-head); font-size:17px; font-weight:700;
-  cursor:pointer; box-shadow:0 4px 20px rgba(8,145,178,.28);
+  cursor:pointer; box-shadow:0 4px 20px rgba(124,58,237,.28);
   transition:all .2s; margin-top:8px;
 }
-.btn-login:hover{ transform:translateY(-1px); box-shadow:0 8px 28px rgba(8,145,178,.38); }
+.btn-login:hover{ transform:translateY(-1px); box-shadow:0 8px 28px rgba(124,58,237,.38); }
 .btn-login:active{ transform:scale(.98); }
 .login-error{
   background:var(--red-lt); border:1px solid rgba(220,38,38,.2);
@@ -140,99 +123,90 @@ body{ background:var(--bg); color:var(--text); font-family:var(--font-body); min
   font-size:13px; color:var(--red); margin-top:12px; display:none;
 }
 
-/* ── DASHBOARD ── */
-.dash-wrap{ padding:16px; }
-.dash-greeting{ font-family:var(--font-head); font-size:20px; font-weight:700; color:var(--text); margin-bottom:2px; }
-.dash-date{ font-size:12px; color:var(--text3); font-family:var(--font-mono); margin-bottom:16px; }
-.dash-cards{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:4px; }
-.dash-card{
+/* ── SIDE NAV (desktop feel on mobile via bottom tab) ── */
+.tab-nav{
+  display:flex; background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  position:sticky; top:58px; z-index:90;
+  overflow-x:auto; scrollbar-width:none;
+  box-shadow:var(--shadow-sm);
+}
+.tab-nav::-webkit-scrollbar{ display:none; }
+.tab-btn{
+  flex-shrink:0; padding:13px 16px; border:none; background:none;
+  font-family:var(--font-head); font-size:13px; font-weight:600;
+  color:var(--text3); cursor:pointer; letter-spacing:.3px;
+  border-bottom:2px solid transparent; transition:all .2s; white-space:nowrap;
+}
+.tab-btn.active{ color:var(--accent); border-bottom-color:var(--accent); }
+.tab-page{ display:none; padding:16px; }
+.tab-page.active{ display:block; }
+
+/* ── SECTION TITLES ── */
+.section-title{
+  font-family:var(--font-head); font-size:18px; font-weight:700;
+  color:var(--text); margin-bottom:4px;
+}
+.section-sub{ font-size:12px; color:var(--text3); margin-bottom:16px; }
+
+/* ── STAT CARDS ── */
+.stat-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px; }
+.stat-card{
   background:var(--card); border:1px solid var(--border);
   border-radius:var(--radius); padding:16px;
-  box-shadow:var(--shadow-sm); position:relative; overflow:hidden;
+  box-shadow:var(--shadow-sm);
 }
-.dash-card-icon{ font-size:20px; margin-bottom:8px; }
-.dash-card-val{ font-family:var(--font-head); font-size:30px; font-weight:800; line-height:1; }
-.dash-card.cyan   .dash-card-val{ color:var(--accent); }
-.dash-card.green  .dash-card-val{ color:var(--green); }
-.dash-card.amber  .dash-card-val{ color:var(--amber); }
-.dash-card.red    .dash-card-val{ color:var(--red); }
-.dash-card-lbl{ font-size:11px; color:var(--text3); margin-top:4px; font-weight:500; }
+.stat-icon{ font-size:20px; margin-bottom:8px; }
+.stat-val{ font-family:var(--font-head); font-size:28px; font-weight:800; line-height:1; }
+.stat-card.purple .stat-val{ color:var(--accent); }
+.stat-card.green  .stat-val{ color:var(--green); }
+.stat-card.amber  .stat-val{ color:var(--amber); }
+.stat-card.red    .stat-val{ color:var(--red); }
+.stat-card.blue   .stat-val{ color:var(--blue); }
+.stat-card.cyan   .stat-val{ color:var(--cyan); }
+.stat-lbl{ font-size:11px; color:var(--text3); margin-top:4px; font-weight:500; }
 
-/* ── FILTER CHIPS ── */
-.filter-row{ display:flex; gap:8px; overflow-x:auto; padding:12px 16px; scrollbar-width:none; }
-.filter-row::-webkit-scrollbar{ display:none; }
-.chip{
-  flex-shrink:0; padding:7px 14px; border-radius:20px;
-  font-size:12px; font-family:var(--font-mono); letter-spacing:.3px;
-  border:1.5px solid var(--border); background:var(--card);
-  color:var(--text2); cursor:pointer; transition:all .2s;
-  white-space:nowrap; box-shadow:var(--shadow-sm);
-}
-.chip.active{ background:var(--accent-lt); border-color:rgba(8,145,178,.35); color:var(--accent); font-weight:600; }
-
-/* ── SEARCH ── */
-.search-wrap{ padding:0 16px 12px; }
-.search-box{
-  display:flex; align-items:center; gap:10px;
+/* ── ACTION CARDS ── */
+.action-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px; }
+.action-card{
   background:var(--card); border:1.5px solid var(--border);
-  border-radius:12px; padding:11px 14px;
+  border-radius:var(--radius); padding:18px 14px;
+  cursor:pointer; transition:all .2s; box-shadow:var(--shadow-sm);
+  text-align:center;
+}
+.action-card:hover{ border-color:rgba(124,58,237,.4); box-shadow:var(--shadow); transform:translateY(-1px); }
+.action-card:active{ transform:scale(.98); }
+.action-icon{ font-size:28px; margin-bottom:10px; }
+.action-label{ font-family:var(--font-head); font-size:13px; font-weight:700; color:var(--text); }
+.action-sub{ font-size:11px; color:var(--text3); margin-top:3px; }
+
+/* ── TABLE-STYLE LIST ── */
+.data-list{ display:flex; flex-direction:column; gap:8px; }
+.data-row{
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:var(--radius); padding:14px 16px;
+  display:flex; align-items:center; justify-content:space-between;
   box-shadow:var(--shadow-sm); transition:all .2s;
 }
-.search-box:focus-within{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(8,145,178,.1); }
-.search-input{ flex:1; background:none; border:none; outline:none; color:var(--text); font-family:var(--font-body); font-size:14px; }
-.search-input::placeholder{ color:var(--text3); }
-
-/* ── ACCOUNT LIST ── */
-.list-section{ padding:0 16px; }
-.list-count{ font-size:11px; color:var(--text3); font-family:var(--font-mono); margin-bottom:10px; }
-.account-card{
-  background:var(--card); border:1.5px solid var(--border);
-  border-radius:var(--radius); padding:16px; margin-bottom:10px;
-  cursor:pointer; transition:all .2s; box-shadow:var(--shadow-sm);
-  animation:slideIn .3s ease;
+.data-row:hover{ border-color:rgba(124,58,237,.3); }
+.data-row-left{ flex:1; }
+.data-row-title{ font-size:14px; font-weight:600; color:var(--text); margin-bottom:2px; }
+.data-row-sub{ font-size:11px; color:var(--text3); font-family:var(--font-mono); }
+.data-row-badge{
+  font-family:var(--font-mono); font-size:10px; letter-spacing:.5px;
+  padding:4px 10px; border-radius:20px; font-weight:600; white-space:nowrap;
 }
-@keyframes slideIn{ from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-.account-card:hover{ border-color:rgba(8,145,178,.4); box-shadow:var(--shadow); }
-.account-card:active{ transform:scale(.99); }
-.card-top{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; }
-.card-accno{ font-family:var(--font-head); font-size:16px; font-weight:700; color:var(--accent); }
-.card-name{ font-size:15px; font-weight:600; color:var(--text); margin-bottom:2px; }
-.card-phone{ font-family:var(--font-mono); font-size:13px; color:var(--green); font-weight:500; }
-.card-addr{ font-size:12px; color:var(--text2); margin-top:6px; line-height:1.5; }
-.status-badge{
-  font-family:var(--font-mono); font-size:9px; letter-spacing:.5px;
-  padding:4px 9px; border-radius:20px; white-space:nowrap; font-weight:600;
-}
-.s-fresh     { background:var(--accent-lt); color:var(--accent); border:1px solid rgba(8,145,178,.25); }
-.s-appt      { background:var(--green-lt); color:var(--green); border:1px solid #86efac; }
-.s-rescheduled{background:var(--amber-lt); color:var(--amber); border:1px solid #fde68a; }
-.s-notvst    { background:var(--amber-lt); color:var(--amber); border:1px solid #fde68a; }
-.s-issue     { background:var(--red-lt); color:var(--red); border:1px solid #fecaca; }
-.s-collected { background:var(--purple-lt); color:var(--purple); border:1px solid #ddd6fe; }
-.s-store     { background:var(--teal-lt); color:var(--teal); border:1px solid #99f6e4; }
-.s-default   { background:var(--bg3); color:var(--text2); border:1px solid var(--border); }
-.card-footer{
-  display:flex; gap:8px; align-items:center;
-  margin-top:10px; padding-top:10px; border-top:1px solid var(--border);
-}
-.strike-dot{ width:9px; height:9px; border-radius:50%; background:var(--red); flex-shrink:0; }
-.card-appt{ font-size:11px; color:var(--green); font-family:var(--font-mono); }
-.card-area{ font-size:11px; color:var(--text3); margin-left:auto; font-family:var(--font-mono); }
-.card-action-row{ display:flex; gap:8px; margin-top:10px; }
-.btn-sm{
-  flex:1; padding:9px 10px; border-radius:10px;
-  font-size:12px; font-family:var(--font-head); font-weight:600;
-  border:1.5px solid; cursor:pointer; transition:all .2s;
-  display:flex; align-items:center; justify-content:center; gap:4px;
-}
-.btn-call{ background:var(--green-lt); color:var(--green); border-color:#86efac; }
-.btn-wa  { background:var(--green-lt); color:#15803d; border-color:#86efac; }
-.btn-log { background:var(--accent-lt); color:var(--accent); border-color:rgba(8,145,178,.3); }
-.btn-sm:active{ transform:scale(.96); }
+.badge-active   { background:var(--green-lt); color:var(--green); border:1px solid #86efac; }
+.badge-inactive { background:var(--red-lt); color:var(--red); border:1px solid #fecaca; }
+.badge-tc    { background:var(--orange-lt); color:var(--orange); border:1px solid rgba(249,115,22,.3); }
+.badge-exec  { background:var(--cyan-lt); color:var(--cyan); border:1px solid rgba(8,145,178,.3); }
+.badge-sv    { background:var(--accent-lt); color:var(--accent); border:1px solid rgba(124,58,237,.3); }
+.badge-admin { background:var(--accent-lt); color:var(--accent-dk); border:1px solid rgba(109,40,217,.3); }
+.badge-om    { background:var(--blue-lt); color:var(--blue); border:1px solid #93c5fd; }
 
 /* ── BOTTOM SHEET ── */
 .sheet-overlay{
-  position:fixed; inset:0; background:rgba(12,30,38,.4);
+  position:fixed; inset:0; background:rgba(26,15,60,.4);
   z-index:200; opacity:0; pointer-events:none; transition:opacity .3s;
   backdrop-filter:blur(4px);
 }
@@ -240,7 +214,7 @@ body{ background:var(--bg); color:var(--text); font-family:var(--font-body); min
 .bottom-sheet{
   position:fixed; bottom:0; left:0; right:0; z-index:201;
   background:var(--card); border-radius:28px 28px 0 0;
-  border-top:1px solid var(--border); box-shadow:0 -8px 40px rgba(8,145,178,.12);
+  border-top:1px solid var(--border); box-shadow:0 -8px 40px rgba(124,58,237,.12);
   transform:translateY(100%); transition:transform .35s cubic-bezier(.4,0,.2,1);
   max-height:92vh; display:flex; flex-direction:column;
 }
@@ -261,155 +235,85 @@ body{ background:var(--bg); color:var(--text); font-family:var(--font-body); min
 .sheet-close:hover{ background:var(--red-lt); color:var(--red); border-color:rgba(220,38,38,.3); }
 .sheet-body{ flex:1; overflow-y:auto; padding:20px 20px 36px; }
 
-/* ── DETAIL ── */
-.detail-accno{ font-family:var(--font-head); font-size:22px; font-weight:800; color:var(--accent); margin-bottom:2px; }
-.detail-name{ font-size:18px; font-weight:700; color:var(--text); margin-bottom:14px; }
-.detail-batch{
-  display:inline-block; font-family:var(--font-mono); font-size:11px;
-  background:var(--accent-lt); color:var(--accent);
-  padding:4px 12px; border-radius:20px; border:1px solid rgba(8,145,178,.2); margin-bottom:20px;
-}
-.detail-row{ display:flex; gap:10px; align-items:flex-start; margin-bottom:12px; }
-.detail-icon{ width:30px; flex-shrink:0; font-size:18px; }
-.detail-val{ font-size:14px; color:var(--text); line-height:1.5; }
-.detail-val-sub{ font-size:11px; color:var(--text3); margin-top:2px; }
-.detail-phone-big{ font-family:var(--font-mono); font-size:22px; font-weight:600; color:var(--green); letter-spacing:1px; }
-.detail-section-title{
-  font-family:var(--font-mono); font-size:10px; color:var(--text3);
-  letter-spacing:1.5px; text-transform:uppercase;
-  margin:20px 0 12px; padding-top:20px; border-top:1px solid var(--border);
-}
-.strikes-row{ display:flex; gap:6px; align-items:center; }
-.strike-indicator{ width:14px; height:14px; border-radius:50%; border:2px solid var(--border2); background:var(--bg3); }
-.strike-indicator.filled{ background:var(--red); border-color:var(--red); }
-.strike-text{ font-size:12px; color:var(--text3); font-family:var(--font-mono); margin-left:4px; }
-.detail-action-row{ display:flex; gap:10px; margin-top:20px; }
-.btn-detail{
-  flex:1; padding:14px; border-radius:14px;
-  font-family:var(--font-head); font-size:14px; font-weight:700;
-  border:none; cursor:pointer; transition:all .2s;
-  display:flex; align-items:center; justify-content:center; gap:6px;
-}
-.btn-call-big{ background:var(--green); color:#fff; box-shadow:0 4px 16px rgba(22,163,74,.2); }
-.btn-wa-big  { background:#25D366; color:#fff; box-shadow:0 4px 16px rgba(37,211,102,.2); }
-.btn-log-big { background:var(--accent); color:#fff; box-shadow:0 4px 16px rgba(8,145,178,.22); flex:2; }
-.btn-detail:active{ transform:scale(.97); }
-
-/* ── LOG VISIT FORM ── */
-.log-form-title{ font-family:var(--font-head); font-size:17px; font-weight:700; color:var(--text); margin-bottom:16px; }
-.outcome-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:20px; }
-.outcome-btn{
-  padding:13px 8px; border-radius:12px;
-  border:1.5px solid var(--border); background:var(--bg3);
-  color:var(--text2); cursor:pointer; transition:all .2s;
-  text-align:center; font-size:13px; font-family:var(--font-body); font-weight:600;
-}
-.outcome-btn:hover{ border-color:var(--border2); background:var(--card); }
-.outcome-btn.sel-Collected       { background:var(--purple-lt); border-color:#ddd6fe; color:var(--purple); }
-.outcome-btn.sel-Not\ Visited    { background:var(--amber-lt); border-color:#fde68a; color:var(--amber); }
-.outcome-btn.sel-Rescheduled     { background:var(--blue-lt); border-color:#93c5fd; color:var(--blue); }
-.outcome-btn.sel-Issue           { background:var(--red-lt); border-color:#fecaca; color:var(--red); }
-.outcome-btn.sel-Strike          { background:var(--red-lt); border-color:#fecaca; color:var(--red); }
-.outcome-btn.sel-Address\ Not\ Found{ background:var(--bg3); border-color:var(--border2); color:var(--text2); }
-.issue-wrap{ margin-bottom:16px; display:none; }
-.textarea-field{
+/* ── FORM ELEMENTS ── */
+.field-group{ margin-bottom:16px; }
+.field-label{ font-size:11px; font-family:var(--font-mono); letter-spacing:1px; color:var(--text3); margin-bottom:8px; display:block; text-transform:uppercase; }
+.field-input,.field-select{
   width:100%; background:var(--bg3); border:1.5px solid var(--border);
-  border-radius:12px; padding:13px 15px; color:var(--text);
+  border-radius:12px; padding:12px 14px; color:var(--text);
   font-family:var(--font-body); font-size:14px; outline:none;
-  resize:none; min-height:80px; transition:all .2s;
+  transition:all .2s; -webkit-appearance:none;
 }
-.textarea-field:focus{ border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px rgba(8,145,178,.08); }
-.btn-submit-log{
-  width:100%; padding:15px; border-radius:14px;
+.field-input:focus,.field-select:focus{ border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px rgba(124,58,237,.1); }
+.btn-primary{
+  width:100%; padding:14px; border-radius:12px;
   background:linear-gradient(135deg, var(--accent-md), var(--accent-dk));
   border:none; color:#fff;
-  font-family:var(--font-head); font-size:17px; font-weight:700;
-  cursor:pointer; box-shadow:0 4px 20px rgba(8,145,178,.25);
-  transition:all .2s; margin-top:16px;
-}
-.btn-submit-log:hover{ transform:translateY(-1px); }
-.btn-submit-log:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
-
-/* ── STORE SUBMISSION ── */
-.store-sub-title{ font-family:var(--font-head); font-size:17px; font-weight:700; color:var(--text); margin-bottom:16px; }
-.photo-upload-area{
-  border:2px dashed var(--border2); border-radius:14px;
-  padding:32px 16px; text-align:center; cursor:pointer;
-  transition:all .2s; margin-bottom:14px; position:relative;
-  background:var(--bg3);
-}
-.photo-upload-area:hover{ border-color:var(--accent); background:var(--accent-lt); }
-.photo-upload-area.has-photo{ border-style:solid; border-color:var(--green); padding:0; overflow:hidden; background:none; }
-.photo-preview{ width:100%; max-height:220px; object-fit:cover; border-radius:12px; display:none; }
-.photo-input{ position:absolute; inset:0; opacity:0; cursor:pointer; }
-.photo-upload-icon{ font-size:32px; margin-bottom:8px; }
-.photo-upload-text{ font-size:14px; color:var(--text2); font-weight:600; }
-.photo-upload-sub{ font-size:12px; color:var(--text3); margin-top:4px; }
-.gps-row{ display:flex; gap:10px; align-items:center; margin-bottom:14px; }
-.gps-status{
-  flex:1; background:var(--bg3); border:1.5px solid var(--border);
-  border-radius:10px; padding:11px 14px;
-  font-size:12px; font-family:var(--font-mono); color:var(--text3);
-}
-.gps-status.got{ border-color:var(--green); color:var(--green); background:var(--green-lt); }
-.btn-gps{
-  padding:11px 16px; border-radius:10px;
-  background:var(--accent-lt); border:1.5px solid rgba(8,145,178,.3);
-  color:var(--accent); font-family:var(--font-head); font-size:13px; font-weight:700;
-  cursor:pointer; transition:all .2s; white-space:nowrap;
-}
-.btn-gps:active{ transform:scale(.97); }
-.btn-submit-store{
-  width:100%; padding:15px; border-radius:14px;
-  background:linear-gradient(135deg, var(--purple), #6d28d9);
-  border:none; color:#fff;
-  font-family:var(--font-head); font-size:17px; font-weight:700;
-  cursor:pointer; box-shadow:0 4px 20px rgba(124,58,237,.22);
+  font-family:var(--font-head); font-size:16px; font-weight:700;
+  cursor:pointer; box-shadow:0 4px 16px rgba(124,58,237,.25);
   transition:all .2s; margin-top:8px;
 }
-.btn-submit-store:hover{ transform:translateY(-1px); }
-.btn-submit-store:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
-
-/* ── STORE QUEUE ── */
-.store-card{
-  background:var(--card); border:1.5px solid var(--border);
-  border-radius:var(--radius); padding:16px; margin:0 16px 10px;
-  cursor:pointer; transition:all .2s; box-shadow:var(--shadow-sm);
-  animation:slideIn .3s ease;
+.btn-primary:hover{ transform:translateY(-1px); }
+.btn-primary:active{ transform:scale(.98); }
+.btn-primary:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+.btn-secondary{
+  width:100%; padding:13px; border-radius:12px;
+  background:var(--accent-lt); border:1.5px solid rgba(124,58,237,.25); color:var(--accent);
+  font-family:var(--font-head); font-size:15px; font-weight:700;
+  cursor:pointer; transition:all .2s; margin-top:8px;
 }
-.store-card:hover{ border-color:rgba(124,58,237,.4); box-shadow:var(--shadow); }
-.store-card-top{ display:flex; justify-content:space-between; margin-bottom:6px; }
-.store-accno{ font-family:var(--font-head); font-size:15px; font-weight:700; color:var(--purple); }
-.store-name{ font-size:13px; color:var(--text); margin-bottom:4px; font-weight:500; }
-.store-meta{ font-size:11px; color:var(--text3); font-family:var(--font-mono); }
-.leakage-badge{
+.btn-secondary:hover{ background:rgba(124,58,237,.12); }
+.btn-danger{
+  padding:9px 16px; border-radius:10px;
+  background:var(--red-lt); border:1.5px solid rgba(220,38,38,.25); color:var(--red);
+  font-family:var(--font-head); font-size:13px; font-weight:700;
+  cursor:pointer; transition:all .2s;
+}
+.btn-danger:hover{ background:rgba(220,38,38,.15); }
+
+/* ── PENDING / ISSUES LIST ── */
+.issue-card{
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:var(--radius); padding:14px; margin-bottom:8px;
+  box-shadow:var(--shadow-sm);
+}
+.issue-card.aged{ border-left:3px solid var(--red); }
+.issue-card-top{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; }
+.issue-accno{ font-family:var(--font-head); font-size:14px; font-weight:700; color:var(--accent); }
+.issue-name{ font-size:13px; color:var(--text); font-weight:500; margin-bottom:2px; }
+.issue-meta{ font-size:11px; color:var(--text3); font-family:var(--font-mono); }
+.aging-badge{
   font-size:9px; padding:3px 8px; border-radius:20px;
-  background:var(--red-lt); color:var(--red); border:1px solid #fecaca;
   font-family:var(--font-mono); font-weight:600;
 }
-.store-section-header{
-  padding:12px 16px 8px;
-  font-family:var(--font-mono); font-size:11px; color:var(--text3); letter-spacing:.5px;
+.aging-ok  { background:var(--green-lt); color:var(--green); border:1px solid #86efac; }
+.aging-warn{ background:var(--amber-lt); color:var(--amber); border:1px solid #fde68a; }
+.aging-crit{ background:var(--red-lt); color:var(--red); border:1px solid #fecaca; }
+
+/* ── SEARCH ── */
+.search-wrap{ margin-bottom:12px; }
+.search-box{
+  display:flex; align-items:center; gap:10px;
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:12px; padding:11px 14px;
+  box-shadow:var(--shadow-sm); transition:all .2s;
 }
+.search-box:focus-within{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(124,58,237,.1); }
+.search-input{ flex:1; background:none; border:none; outline:none; color:var(--text); font-family:var(--font-body); font-size:14px; }
+.search-input::placeholder{ color:var(--text3); }
 
-/* ── EMPTY ── */
-.empty-state{ text-align:center; padding:60px 20px; }
-.empty-icon{ font-size:48px; margin-bottom:12px; opacity:.35; }
-.empty-text{ font-size:15px; color:var(--text2); font-weight:600; }
-.empty-sub{ font-size:13px; color:var(--text3); margin-top:6px; }
+/* ── DIVIDER ── */
+.divider{ height:1px; background:var(--border); margin:20px 0; }
+.sub-label{ font-family:var(--font-mono); font-size:10px; color:var(--text3); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:10px; }
 
-/* ── LOADER / TOAST ── */
+/* ── TOAST / LOADER ── */
 .loading-overlay{
-  position:fixed; inset:0; background:rgba(246,250,251,.9);
+  position:fixed; inset:0; background:rgba(250,248,255,.9);
   z-index:300; display:none;
   align-items:center; justify-content:center; flex-direction:column; gap:14px;
 }
 .loading-overlay.show{ display:flex; }
-.spinner{
-  width:40px; height:40px; border:3px solid var(--border);
-  border-top-color:var(--accent); border-radius:50%;
-  animation:spin .7s linear infinite;
-}
+.spinner{ width:40px; height:40px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .7s linear infinite; }
 @keyframes spin{ to{transform:rotate(360deg)} }
 .loading-text{ font-family:var(--font-mono); font-size:13px; color:var(--text2); }
 .toast{
@@ -424,6 +328,12 @@ body{ background:var(--bg); color:var(--text); font-family:var(--font-body); min
 .toast.show   { transform:translateX(-50%) translateY(0); }
 .toast.success{ background:var(--green); }
 .toast.error  { background:var(--red); }
+
+/* ── EMPTY ── */
+.empty-state{ text-align:center; padding:48px 20px; }
+.empty-icon{ font-size:44px; margin-bottom:10px; opacity:.35; }
+.empty-text{ font-size:15px; color:var(--text2); font-weight:600; }
+.empty-sub{ font-size:13px; color:var(--text3); margin-top:6px; }
 </style>
 </head>
 <body>
@@ -431,13 +341,13 @@ body{ background:var(--bg); color:var(--text); font-family:var(--font-body); min
 <div class="loading-overlay" id="loader"><div class="spinner"></div><div class="loading-text" id="loaderText">Loading...</div></div>
 <div class="toast" id="toast"></div>
 
-<!-- LOGIN -->
+<!-- ── LOGIN ── -->
 <div class="login-screen" id="loginScreen">
   <div class="login-card">
     <div class="login-logo-wrap">
       <div class="login-logo">VOA</div>
-      <div class="login-title">Executive Console</div>
-      <div class="login-sub">Vibrant Owl Agencies — Field Collection</div>
+      <div class="login-title">Admin Panel</div>
+      <div class="login-sub">Admin · Supervisor · Operations Manager</div>
     </div>
     <div class="form-group">
       <label class="form-label">City</label>
@@ -448,7 +358,7 @@ body{ background:var(--bg); color:var(--text); font-family:var(--font-body); min
     </div>
     <div class="form-group">
       <label class="form-label">Staff ID</label>
-      <input class="form-input" id="loginStaffId" type="text" placeholder="e.g. EX_001" autocomplete="off">
+      <input class="form-input" id="loginStaffId" type="text" placeholder="e.g. AD_001 / SV_001 / OM_001" autocomplete="off">
     </div>
     <div class="form-group">
       <label class="form-label">PIN</label>
@@ -459,143 +369,296 @@ body{ background:var(--bg); color:var(--text); font-family:var(--font-body); min
   </div>
 </div>
 
-<!-- APP -->
+<!-- ── APP ── -->
 <div id="app" style="display:none;">
   <div class="header">
     <div class="header-brand">
       <div class="brand-logo">VOA</div>
       <span class="brand-name">VOA</span>
-      <span class="brand-role">EXECUTIVE</span>
+      <span class="brand-role" id="headerRole">ADMIN</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <div class="staff-badge" id="headerBadge">EX_000</div>
+      <div class="staff-badge" id="headerBadge">AD_000</div>
       <button class="logout-btn" onclick="doLogout()">✕</button>
     </div>
   </div>
 
-  <!-- Tab Nav -->
-  <div class="tab-nav">
-    <button class="tab-btn active" id="tabAccounts" onclick="switchTab('accounts')">📋 My Accounts</button>
-    <button class="tab-btn" id="tabStore" onclick="switchTab('store')">🏪 Store Queue</button>
+  <!-- Tab nav — tabs shown per role -->
+  <div class="tab-nav" id="tabNav"></div>
+
+  <!-- ── OVERVIEW TAB ── -->
+  <div class="tab-page" id="pageOverview">
+    <div class="section-title">Operations Overview</div>
+    <div class="section-sub" id="overviewSub">Month-to-date summary</div>
+    <div class="stat-grid">
+      <div class="stat-card purple"><div class="stat-icon">📦</div><div class="stat-val" id="ovTotal">—</div><div class="stat-lbl">Total Base</div></div>
+      <div class="stat-card green" ><div class="stat-icon">✅</div><div class="stat-val" id="ovCollected">—</div><div class="stat-lbl">Collected</div></div>
+      <div class="stat-card amber" ><div class="stat-icon">⏳</div><div class="stat-val" id="ovPending">—</div><div class="stat-lbl">Pending</div></div>
+      <div class="stat-card red"   ><div class="stat-icon">⚠️</div><div class="stat-val" id="ovIssues">—</div><div class="stat-lbl">Open Issues</div></div>
+      <div class="stat-card blue"  ><div class="stat-icon">📞</div><div class="stat-val" id="ovCalls">—</div><div class="stat-lbl">Calls Made</div></div>
+      <div class="stat-card cyan"  ><div class="stat-icon">📅</div><div class="stat-val" id="ovAppts">—</div><div class="stat-lbl">Appts Fixed</div></div>
+    </div>
+
+    <!-- Alerts -->
+    <div class="sub-label">Alerts</div>
+    <div id="alertsList">
+      <div class="empty-state"><div class="empty-icon">✅</div><div class="empty-text">No active alerts</div></div>
+    </div>
   </div>
 
-  <!-- ACCOUNTS TAB -->
-  <div class="tab-page active" id="pageAccounts">
-    <div class="dash-wrap">
-      <div class="dash-greeting" id="dashGreeting">Good morning</div>
-      <div class="dash-date" id="dashDate">—</div>
-      <div class="dash-cards">
-        <div class="dash-card cyan"><div class="dash-card-icon">📋</div><div class="dash-card-val" id="cntAssigned">—</div><div class="dash-card-lbl">Assigned</div></div>
-        <div class="dash-card green"><div class="dash-card-icon">✅</div><div class="dash-card-val" id="cntCollected">—</div><div class="dash-card-lbl">Collected (MTD)</div></div>
-        <div class="dash-card amber"><div class="dash-card-icon">⏳</div><div class="dash-card-val" id="cntPending">—</div><div class="dash-card-lbl">Pending Visits</div></div>
-        <div class="dash-card red"><div class="dash-card-icon">⚠️</div><div class="dash-card-val" id="cntIssues">—</div><div class="dash-card-lbl">Issues Raised</div></div>
+  <!-- ── STAFF TAB (ADMIN only) ── -->
+  <div class="tab-page" id="pageStaff">
+    <div class="section-title">Staff Management</div>
+    <div class="section-sub">Create, view and manage all staff</div>
+
+    <div class="action-grid">
+      <div class="action-card" onclick="openSheet('createStaffSheet')">
+        <div class="action-icon">➕</div>
+        <div class="action-label">Add Staff</div>
+        <div class="action-sub">Create new account</div>
+      </div>
+      <div class="action-card" onclick="openSheet('resetPinSheet')">
+        <div class="action-icon">🔑</div>
+        <div class="action-label">Reset PIN</div>
+        <div class="action-sub">Change staff PIN</div>
+      </div>
+      <div class="action-card" onclick="openSheet('toggleStaffSheet')">
+        <div class="action-icon">🔄</div>
+        <div class="action-label">Toggle Active</div>
+        <div class="action-sub">Enable / disable</div>
+      </div>
+      <div class="action-card" onclick="loadStaffList()">
+        <div class="action-icon">👥</div>
+        <div class="action-label">View All Staff</div>
+        <div class="action-sub">Refresh list</div>
       </div>
     </div>
 
-    <div class="filter-row">
-      <div class="chip active" onclick="setFilter('All',this)">All</div>
-      <div class="chip" onclick="setFilter('Appt Fixed',this)">Appt Fixed</div>
-      <div class="chip" onclick="setFilter('Rescheduled',this)">Rescheduled</div>
-      <div class="chip" onclick="setFilter('Not Visited',this)">Not Visited</div>
-      <div class="chip" onclick="setFilter('Issue',this)">Issue</div>
-      <div class="chip" onclick="setFilter('Collected',this)">Collected</div>
-    </div>
-
+    <div class="sub-label">All Staff</div>
     <div class="search-wrap">
       <div class="search-box">
-        <span style="color:var(--text3);font-size:16px;">🔍</span>
-        <input class="search-input" id="searchInput" placeholder="Search account / name / area…" oninput="renderList()">
+        <span style="color:var(--text3);font-size:15px;">🔍</span>
+        <input class="search-input" id="staffSearch" placeholder="Search staff ID / name / role…" oninput="renderStaffList()">
+      </div>
+    </div>
+    <div id="staffList"><div class="empty-state"><div class="empty-icon">👥</div><div class="empty-text">Loading staff…</div></div></div>
+  </div>
+
+  <!-- ── ASSIGN TAB (ADMIN) ── -->
+  <div class="tab-page" id="pageAssign">
+    <div class="section-title">Assign &amp; Dispatch</div>
+    <div class="section-sub">Batch upload, TC assignment, exec area mapping</div>
+
+    <div class="action-grid">
+      <div class="action-card" onclick="openSheet('uploadBaseSheet')">
+        <div class="action-icon">📤</div>
+        <div class="action-label">Upload Base</div>
+        <div class="action-sub">New ACT data batch</div>
+      </div>
+      <div class="action-card" onclick="openSheet('assignTCSheet')">
+        <div class="action-icon">🎯</div>
+        <div class="action-label">Assign Telecaller</div>
+        <div class="action-sub">Account → TC mapping</div>
+      </div>
+      <div class="action-card" onclick="openSheet('autoAssignSheet')">
+        <div class="action-icon">🗺️</div>
+        <div class="action-label">Auto Assign Execs</div>
+        <div class="action-sub">Area-wise mapping</div>
+      </div>
+      <div class="action-card" onclick="openSheet('batchSheet')">
+        <div class="action-icon">📋</div>
+        <div class="action-label">Batch Info</div>
+        <div class="action-sub">View current batches</div>
       </div>
     </div>
 
-    <div class="list-section">
-      <div class="list-count" id="listCount"></div>
-      <div id="accountList"></div>
-      <div class="empty-state" id="emptyState" style="display:none;">
-        <div class="empty-icon">📦</div>
-        <div class="empty-text">No accounts found</div>
-        <div class="empty-sub">Try a different filter or search</div>
+    <div class="sub-label">Quick Reassign (SUPERVISOR)</div>
+    <div class="data-list" id="reassignList">
+      <div style="background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow-sm);">
+        <div class="field-label">Account Number</div>
+        <input class="field-input" id="reassignAccNo" placeholder="e.g. ACT001234" style="margin-bottom:10px;">
+        <div class="field-label">Reassign To (Staff ID)</div>
+        <input class="field-input" id="reassignTo" placeholder="e.g. TC_002 or EX_003" style="margin-bottom:10px;">
+        <div class="field-label">Reason</div>
+        <input class="field-input" id="reassignReason" placeholder="Why reassigning?" style="margin-bottom:10px;">
+        <button class="btn-primary" onclick="doReassign()" style="margin-top:4px;">Reassign Account</button>
       </div>
     </div>
   </div>
 
-  <!-- STORE QUEUE TAB -->
-  <div class="tab-page" id="pageStore">
-    <div class="dash-wrap" style="padding-bottom:8px;">
-      <div class="dash-greeting">Store Queue</div>
-      <div class="dash-date">Pending receipts to be submitted</div>
+  <!-- ── PENDING TAB ── -->
+  <div class="tab-page" id="pagePending">
+    <div class="section-title">Pending Accounts</div>
+    <div class="section-sub">Accounts awaiting field collection</div>
+    <div class="search-wrap">
+      <div class="search-box">
+        <span style="color:var(--text3);font-size:15px;">🔍</span>
+        <input class="search-input" id="pendingSearch" placeholder="Search account / area…" oninput="renderPendingList()">
+      </div>
     </div>
-    <div class="store-section-header" id="storeCount"></div>
-    <div id="storeList"></div>
-    <div class="empty-state" id="storeEmpty" style="display:none;">
-      <div class="empty-icon">🏪</div>
-      <div class="empty-text">Store queue is clear</div>
-      <div class="empty-sub">All collected routers have been submitted</div>
-    </div>
+    <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px;" id="pendingCount"></div>
+    <div id="pendingList"><div class="empty-state"><div class="empty-icon">⏳</div><div class="empty-text">Loading…</div></div></div>
+  </div>
+
+  <!-- ── ISSUES TAB ── -->
+  <div class="tab-page" id="pageIssues">
+    <div class="section-title">Open Issues</div>
+    <div class="section-sub">Junction box · Refund · Reconnection · Others</div>
+    <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px;" id="issuesCount"></div>
+    <div id="issuesList"><div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Loading…</div></div></div>
+  </div>
+
+  <!-- ── TEAM TAB (SUPERVISOR) ── -->
+  <div class="tab-page" id="pageTeam">
+    <div class="section-title">Team Performance</div>
+    <div class="section-sub">Telecaller & executive breakdown (MTD)</div>
+
+    <div class="sub-label">Telecallers</div>
+    <div id="tcPerfList"><div class="empty-state"><div class="empty-icon">📞</div><div class="empty-text">Loading…</div></div></div>
+
+    <div class="divider"></div>
+    <div class="sub-label">Field Executives</div>
+    <div id="execPerfList"><div class="empty-state"><div class="empty-icon">🚴</div><div class="empty-text">Loading…</div></div></div>
   </div>
 </div>
 
-<!-- SHEET OVERLAY -->
+<!-- ── BOTTOM SHEETS ── -->
 <div class="sheet-overlay" id="overlay" onclick="closeSheet()"></div>
 
-<!-- Detail / Log Visit Sheet -->
-<div class="bottom-sheet" id="mainSheet">
+<!-- Create Staff -->
+<div class="bottom-sheet" id="createStaffSheet">
   <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
-  <div class="sheet-header">
-    <div class="sheet-title" id="sheetTitle">Account</div>
-    <div class="sheet-close" onclick="closeSheet()">✕</div>
+  <div class="sheet-header"><div class="sheet-title">Add New Staff</div><div class="sheet-close" onclick="closeSheet()">✕</div></div>
+  <div class="sheet-body">
+    <div class="field-group"><label class="field-label">Role</label>
+      <select class="field-select" id="csRole">
+        <option value="TELECALLER">Telecaller</option>
+        <option value="EXECUTIVE">Executive</option>
+        <option value="SUPERVISOR">Supervisor</option>
+        <option value="OPS_MANAGER">Ops Manager</option>
+        <option value="ADMIN">Admin</option>
+      </select>
+    </div>
+    <div class="field-group"><label class="field-label">Display Name</label><input class="field-input" id="csName" placeholder="e.g. Telecaller 8"></div>
+    <div class="field-group"><label class="field-label">City</label>
+      <select class="field-select" id="csCity">
+        <option value="CBE">Coimbatore (CBE)</option>
+        <option value="CHN">Chennai (CHN)</option>
+      </select>
+    </div>
+    <div class="field-group"><label class="field-label">PIN (4 digits)</label><input class="field-input" id="csPin" type="password" inputmode="numeric" maxlength="4" placeholder="4-digit PIN"></div>
+    <div class="field-group"><label class="field-label">Area (exec only, optional)</label><input class="field-input" id="csArea" placeholder="e.g. RS Puram, Tatabad"></div>
+    <button class="btn-primary" onclick="doCreateStaff()">Create Staff Account</button>
   </div>
-  <div class="sheet-body" id="sheetBody"></div>
 </div>
 
-<!-- Store Submission Sheet -->
-<div class="bottom-sheet" id="storeSheet" style="z-index:202;">
+<!-- Reset PIN -->
+<div class="bottom-sheet" id="resetPinSheet">
   <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
-  <div class="sheet-header">
-    <div class="sheet-title">Submit Store Receipt</div>
-    <div class="sheet-close" onclick="closeStoreSheet()">✕</div>
-  </div>
+  <div class="sheet-header"><div class="sheet-title">Reset Staff PIN</div><div class="sheet-close" onclick="closeSheet()">✕</div></div>
   <div class="sheet-body">
-    <div class="detail-accno" id="storeAccNo"></div>
-    <div class="detail-name" id="storeAccName"></div>
+    <div class="field-group"><label class="field-label">Staff ID</label><input class="field-input" id="rpStaffId" placeholder="e.g. TC_003"></div>
+    <div class="field-group"><label class="field-label">New PIN (4 digits)</label><input class="field-input" id="rpPin" type="password" inputmode="numeric" maxlength="4" placeholder="New 4-digit PIN"></div>
+    <button class="btn-primary" onclick="doResetPin()">Reset PIN</button>
+  </div>
+</div>
 
-    <div class="form-group" style="margin-top:16px;">
-      <label class="form-label">Receipt Photo</label>
-      <div class="photo-upload-area" id="photoArea">
-        <input type="file" accept="image/*" capture="camera" class="photo-input" id="photoInput" onchange="handlePhoto(event)">
-        <img class="photo-preview" id="photoPreview" alt="Receipt">
-        <div id="photoPlaceholder">
-          <div class="photo-upload-icon">📷</div>
-          <div class="photo-upload-text">Tap to capture receipt</div>
-          <div class="photo-upload-sub">Camera or gallery</div>
-        </div>
-      </div>
+<!-- Toggle Staff -->
+<div class="bottom-sheet" id="toggleStaffSheet">
+  <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
+  <div class="sheet-header"><div class="sheet-title">Toggle Staff Status</div><div class="sheet-close" onclick="closeSheet()">✕</div></div>
+  <div class="sheet-body">
+    <div class="field-group"><label class="field-label">Staff ID</label><input class="field-input" id="tsStaffId" placeholder="e.g. EX_002"></div>
+    <div class="field-group"><label class="field-label">Set Status</label>
+      <select class="field-select" id="tsStatus">
+        <option value="true">Active</option>
+        <option value="false">Inactive (Disabled)</option>
+      </select>
     </div>
+    <button class="btn-primary" onclick="doToggleStaff()">Update Status</button>
+  </div>
+</div>
 
-    <div class="form-group">
-      <label class="form-label">GPS Location</label>
-      <div class="gps-row">
-        <div class="gps-status" id="gpsStatus">📍 Not captured yet</div>
-        <button class="btn-gps" onclick="captureGPS()">📡 Get GPS</button>
-      </div>
+<!-- Upload Base -->
+<div class="bottom-sheet" id="uploadBaseSheet">
+  <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
+  <div class="sheet-header"><div class="sheet-title">Upload New Base</div><div class="sheet-close" onclick="closeSheet()">✕</div></div>
+  <div class="sheet-body">
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">
+      Paste the ACT data range name or Sheet tab name below. The pipeline will filter duplicates and historic accounts automatically.
+    </p>
+    <div class="field-group"><label class="field-label">Batch Label</label><input class="field-input" id="ubBatch" placeholder="e.g. VOA_APR_2026_1"></div>
+    <div class="field-group"><label class="field-label">Source Sheet Tab Name</label><input class="field-input" id="ubSource" placeholder="e.g. ACT_Raw_Base"></div>
+    <div class="field-group"><label class="field-label">City</label>
+      <select class="field-select" id="ubCity">
+        <option value="CBE">Coimbatore (CBE)</option>
+        <option value="CHN">Chennai (CHN)</option>
+      </select>
     </div>
+    <button class="btn-primary" onclick="doUploadBase()">▶ Run Pipeline</button>
+    <p style="font-size:11px;color:var(--text3);margin-top:12px;text-align:center;">Duplicates + historic accounts will be filtered automatically</p>
+  </div>
+</div>
 
-    <div class="form-group">
-      <label class="form-label">Store Notes (optional)</label>
-      <textarea class="textarea-field" id="storeNotes" placeholder="Any notes from the store visit…"></textarea>
+<!-- Assign TC -->
+<div class="bottom-sheet" id="assignTCSheet">
+  <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
+  <div class="sheet-header"><div class="sheet-title">Assign Telecaller</div><div class="sheet-close" onclick="closeSheet()">✕</div></div>
+  <div class="sheet-body">
+    <div class="field-group"><label class="field-label">Batch No</label><input class="field-input" id="atBatch" placeholder="e.g. VOA_MAR_2026_1"></div>
+    <div class="field-group"><label class="field-label">Telecaller Staff ID</label><input class="field-input" id="atTCId" placeholder="e.g. TC_001"></div>
+    <div class="field-group"><label class="field-label">City</label>
+      <select class="field-select" id="atCity">
+        <option value="CBE">Coimbatore (CBE)</option>
+        <option value="CHN">Chennai (CHN)</option>
+      </select>
     </div>
+    <button class="btn-primary" onclick="doAssignTC()">Assign Telecaller to Batch</button>
+  </div>
+</div>
 
-    <button class="btn-submit-store" id="btnSubmitStore" onclick="submitStoreReceipt()">🏪 Submit Receipt</button>
+<!-- Auto Assign Execs -->
+<div class="bottom-sheet" id="autoAssignSheet">
+  <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
+  <div class="sheet-header"><div class="sheet-title">Auto Assign Executives</div><div class="sheet-close" onclick="closeSheet()">✕</div></div>
+  <div class="sheet-body">
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">
+      Automatically assigns executives to pending accounts based on area mapping configured in the sheet.
+    </p>
+    <div class="field-group"><label class="field-label">City</label>
+      <select class="field-select" id="aaCity">
+        <option value="CBE">Coimbatore (CBE)</option>
+        <option value="CHN">Chennai (CHN)</option>
+      </select>
+    </div>
+    <button class="btn-primary" onclick="doAutoAssign()">▶ Run Auto Assign</button>
+    <button class="btn-secondary" onclick="openSheet('areaMapSheet')" style="margin-top:8px;">⚙ Configure Area Mapping</button>
+  </div>
+</div>
+
+<!-- Area Mapping config -->
+<div class="bottom-sheet" id="areaMapSheet" style="z-index:202;">
+  <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
+  <div class="sheet-header"><div class="sheet-title">Area → Exec Mapping</div><div class="sheet-close" onclick="()=>{document.getElementById('areaMapSheet').classList.remove('open')}">✕</div></div>
+  <div class="sheet-body">
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">Each area should be mapped to one executive Staff ID. This controls auto-assignment.</p>
+    <div id="areaMapList"><div class="empty-state"><div class="empty-icon">🗺️</div><div class="empty-text">Loading area map…</div></div></div>
+    <div class="divider"></div>
+    <div class="sub-label">Add / Update Mapping</div>
+    <div class="field-group"><label class="field-label">Area Name</label><input class="field-input" id="amArea" placeholder="e.g. RS Puram"></div>
+    <div class="field-group"><label class="field-label">Executive Staff ID</label><input class="field-input" id="amExecId" placeholder="e.g. EX_001"></div>
+    <button class="btn-primary" onclick="doSaveAreaMap()">Save Mapping</button>
   </div>
 </div>
 
 <script>
 const API_URL='https://script.google.com/macros/s/AKfycbwsGJ0HI7smnWk-3Cpcno6BJbRwbWHe3ZaAhPavTmHE4IrIG9Kk0t_7mQqh9x_fTHnI/exec', CLIENT_ID='LIVARA_CBE';
-let session=null, allAccounts=[], activeFilter='All', activeAccount=null;
-let selectedOutcome='', gpsLat='', gpsLng='', photoBase64='', storeAccount=null;
+const ADMIN_ROLES=['ADMIN','OPS_MANAGER','SUPERVISOR'];
+let session=null, allStaff=[], allPending=[], allIssues=[];
 
-async function api(p){p.clientId=p.clientId||CLIENT_ID;p.token=session?.token;try{const r=await fetch(API_URL+'?'+new URLSearchParams(p));return await r.json();}catch(e){return{success:false,error:e.message};}}
-async function apiPost(action,body){body.clientId=CLIENT_ID;body.token=session?.token;body.action=action;try{const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return await r.json();}catch(e){return{success:false,error:e.message};}}
+/* ── API ── */
+async function api(p){p.client_id=p.client_id||CLIENT_ID;p.token=session?.token;try{const r=await fetch(API_URL+'?'+new URLSearchParams(p));return await r.json();}catch(e){return{success:false,error:e.message};}}
+async function apiPost(action,body){body.client_id=CLIENT_ID;body.token=session?.token;body.action=action;try{const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});return await r.json();}catch(e){try{const p=Object.assign({},body);const r=await fetch(API_URL+'?'+new URLSearchParams(p));return await r.json();}catch(e2){return{success:false,error:'Network error'};}}}
 
 /* ── LOGIN ── */
 async function doLogin(){
@@ -608,7 +671,7 @@ async function doLogin(){
   const res=await api({action:'login',city,staffId,pin});
   hideLoader();
   if(!res.success){showErr(res.error||'Login failed');return;}
-  if(res.data.role!=='EXECUTIVE'){showErr('Access denied — Executive login only');return;}
+  if(!ADMIN_ROLES.includes(res.data.role)){showErr('Access denied — Admin/Supervisor login only');return;}
   session=res.data; startApp();
 }
 function showErr(m){const e=document.getElementById('loginError');e.textContent=m;e.style.display='block';}
@@ -618,250 +681,335 @@ function startApp(){
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('app').style.display='block';
   document.getElementById('headerBadge').textContent=session.staffId+' · '+session.city;
-  const h=new Date().getHours();
-  document.getElementById('dashGreeting').textContent=(h<12?'Good morning':h<17?'Good afternoon':'Good evening')+', '+(session.staffName||session.staffId);
-  document.getElementById('dashDate').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  loadDashboard();
+  document.getElementById('headerRole').textContent=session.role;
+  buildTabs();
+  loadOverview();
 }
 
-/* ── LOAD DATA ── */
-async function loadDashboard(){
-  showLoader('Loading accounts...');
-  const[accRes,dashRes]=await Promise.all([
-    api({action:'get_exec_accounts',city:session.city,staffId:session.staffId}),
-    api({action:'get_exec_dashboard',city:session.city,staffId:session.staffId}),
-  ]);
-  hideLoader();
-  allAccounts=accRes.success?(accRes.data||[]):demoAccounts();
-  renderList();
-  if(dashRes.success){
-    const d=dashRes.data;
-    document.getElementById('cntAssigned').textContent=d.assigned??allAccounts.length;
-    document.getElementById('cntCollected').textContent=d.collected??0;
-    document.getElementById('cntPending').textContent=d.pending??0;
-    document.getElementById('cntIssues').textContent=d.issues??0;
-  }else{
-    document.getElementById('cntAssigned').textContent=allAccounts.length;
-    ['cntCollected','cntPending','cntIssues'].forEach(id=>document.getElementById(id).textContent='—');
+/* ── BUILD TABS BASED ON ROLE ── */
+function buildTabs(){
+  const role=session.role;
+  const tabs=[];
+  tabs.push({id:'overview', label:'📊 Overview', page:'pageOverview'});
+  if(role==='ADMIN'){
+    tabs.push({id:'staff',   label:'👥 Staff',    page:'pageStaff'});
+    tabs.push({id:'assign',  label:'🎯 Assign',   page:'pageAssign'});
   }
-  loadStoreQueue();
+  if(role==='SUPERVISOR'){
+    tabs.push({id:'assign',  label:'🔄 Reassign', page:'pageAssign'});
+    tabs.push({id:'team',    label:'📈 Team',     page:'pageTeam'});
+  }
+  tabs.push({id:'pending', label:'⏳ Pending', page:'pagePending'});
+  tabs.push({id:'issues',  label:'⚠️ Issues',  page:'pageIssues'});
+
+  const nav=document.getElementById('tabNav');
+  nav.innerHTML=tabs.map((t,i)=>`<button class="tab-btn ${i===0?'active':''}" id="tabBtn_${t.id}" onclick="switchTab('${t.id}','${t.page}')">${t.label}</button>`).join('');
+
+  // Load data for default tab
+  document.getElementById('pageOverview').classList.add('active');
+  if(role==='ADMIN')   loadStaffList();
+  if(role==='SUPERVISOR') loadTeamPerf();
+  loadPending();
+  loadIssues();
 }
 
-/* ── RENDER LIST ── */
-function setFilter(f,el){activeFilter=f;document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderList();}
-
-function renderList(){
-  const q=(document.getElementById('searchInput').value||'').toLowerCase();
-  const list=allAccounts.filter(a=>{
-    if(activeFilter!=='All'&&a.status!==activeFilter)return false;
-    if(q){const hay=[a.accountNo,a.name,a.mobile,a.area,a.address].join(' ').toLowerCase();if(!hay.includes(q))return false;}
-    return true;
-  });
-  const container=document.getElementById('accountList'),empty=document.getElementById('emptyState');
-  document.getElementById('listCount').textContent=list.length+' account'+(list.length!==1?'s':'');
-  if(!list.length){container.innerHTML='';empty.style.display='block';return;}
-  empty.style.display='none';
-  container.innerHTML=list.map(a=>`
-    <div class="account-card" onclick="openDetail('${a.accountNo}')">
-      <div class="card-top">
-        <div>
-          <div class="card-accno">${a.accountNo}</div>
-          <div class="card-name">${a.name||'—'}</div>
-          <div class="card-phone">📞 ${a.mobile||'—'}</div>
-        </div>
-        <span class="status-badge ${sClass(a.status)}">${a.status||'FRESH'}</span>
-      </div>
-      <div class="card-addr">📍 ${a.address||'—'}</div>
-      <div class="card-footer">
-        ${Array.from({length:3}).map((_,i)=>`<div class="strike-dot" style="${i<(a.strikeCount||0)?'':'background:transparent;border:2px solid var(--border2);'}"></div>`).join('')}
-        ${a.apptDate?`<span class="card-appt">🗓 ${a.apptDate}</span>`:''}
-        <span class="card-area">${a.area||''}</span>
-      </div>
-      <div class="card-action-row">
-        <button class="btn-sm btn-call" onclick="event.stopPropagation();callNum('${a.mobile}')">📞 Call</button>
-        <button class="btn-sm btn-wa"   onclick="event.stopPropagation();openWA('${a.mobile}','${a.name}','${a.accountNo}')">💬 WA</button>
-        <button class="btn-sm btn-log"  onclick="event.stopPropagation();openLog('${a.accountNo}')">📝 Log Visit</button>
-      </div>
-    </div>`).join('');
-}
-
-function sClass(s){return{'Fresh':'s-fresh','Appt Fixed':'s-appt','Called':'s-appt','Rescheduled':'s-rescheduled','Not Visited':'s-notvst','Issue':'s-issue','Collected':'s-collected','Store Submission Pending':'s-store'}[s]||'s-default';}
-
-/* ── DETAIL SHEET ── */
-function openDetail(accNo){
-  const a=allAccounts.find(x=>x.accountNo===accNo);if(!a)return;activeAccount=a;
-  document.getElementById('sheetTitle').textContent=a.accountNo;
-  document.getElementById('sheetBody').innerHTML=`
-    <div class="detail-accno">${a.accountNo}</div>
-    <div class="detail-name">${a.name||'—'}</div>
-    <span class="detail-batch">${a.batchNo||'—'}</span>
-    <div class="detail-row"><div class="detail-icon">📞</div><div><div class="detail-phone-big">${a.mobile||'—'}</div><div class="detail-val-sub">Customer Mobile</div></div></div>
-    <div class="detail-row"><div class="detail-icon">📍</div><div><div class="detail-val">${a.address||'—'}</div><div class="detail-val-sub">${a.area||''} · ${a.city||''}</div></div></div>
-    ${a.apptDate?`<div class="detail-row"><div class="detail-icon">🗓</div><div><div class="detail-val" style="color:var(--green);font-weight:600;">${a.apptDate}</div><div class="detail-val-sub">Appointment Date (TC Fixed)</div></div></div>`:''}
-    ${a.tcRemark?`<div class="detail-row"><div class="detail-icon">💬</div><div><div class="detail-val">${a.tcRemark}</div><div class="detail-val-sub">TC Remark</div></div></div>`:''}
-    <div class="detail-section-title">Strike Status</div>
-    <div class="strikes-row">
-      ${Array.from({length:3}).map((_,i)=>`<div class="strike-indicator ${i<(a.strikeCount||0)?'filled':''}"></div>`).join('')}
-      <span class="strike-text">${a.strikeCount||0} / 3 strikes</span>
-    </div>
-    <div class="detail-action-row">
-      <button class="btn-detail btn-call-big" onclick="callNum('${a.mobile}')">📞 Call</button>
-      <button class="btn-detail btn-wa-big"   onclick="openWA('${a.mobile}','${a.name}','${a.accountNo}')">💬 WA</button>
-      <button class="btn-detail btn-log-big"  onclick="openLog('${a.accountNo}')">📝 Log Visit</button>
-    </div>`;
-  openSheet('mainSheet');
-}
-
-/* ── LOG VISIT ── */
-function openLog(accNo){
-  const a=allAccounts.find(x=>x.accountNo===accNo);if(!a)return;activeAccount=a;selectedOutcome='';
-  document.getElementById('sheetTitle').textContent='Log Visit — '+accNo;
-  const outcomes=['Collected','Not Visited','Rescheduled','Issue','Strike','Address Not Found'];
-  document.getElementById('sheetBody').innerHTML=`
-    <div class="log-form-title">What was the visit outcome?</div>
-    <div class="outcome-grid">${outcomes.map(o=>`<button class="outcome-btn" onclick="selOutcome('${o}',this)">${o}</button>`).join('')}</div>
-    <div class="issue-wrap" id="issueWrap">
-      <label class="form-label">Issue Type</label>
-      <select class="form-select" id="issueType">
-        <option>Junction Box</option><option>Refund Request</option>
-        <option>Mail Confirmation</option><option>Reconnection Request</option>
-        <option>Address Change</option><option>Other</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Exec Remark</label>
-      <textarea class="textarea-field" id="execRemark" placeholder="Notes about this visit…"></textarea>
-    </div>
-    <button class="btn-submit-log" id="btnSubmitLog" onclick="submitVisit()" disabled>Submit Visit Log</button>`;
-  openSheet('mainSheet');
-}
-
-function selOutcome(o,el){
-  selectedOutcome=o;
-  document.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');
-  el.className='outcome-btn sel-'+o;
-  document.getElementById('btnSubmitLog').disabled=false;
-  const w=document.getElementById('issueWrap');if(w)w.style.display=o==='Issue'?'block':'none';
-}
-
-async function submitVisit(){
-  if(!selectedOutcome)return;
-  const remark=document.getElementById('execRemark').value.trim();
-  const issueType=selectedOutcome==='Issue'?document.getElementById('issueType').value:'';
-  showLoader('Logging visit...');
-  const res=await apiPost('log_visit',{city:session.city,staffId:session.staffId,accountNo:activeAccount.accountNo,outcome:selectedOutcome,execRemark:remark,issueType});
-  hideLoader();
-  if(res.success){
-    toast('Visit logged — '+selectedOutcome,'success');
-    const idx=allAccounts.findIndex(x=>x.accountNo===activeAccount.accountNo);
-    if(idx!==-1)allAccounts[idx].status=selectedOutcome;
-    renderList(); closeSheet();
-    if(selectedOutcome==='Collected') setTimeout(()=>openStoreSheet(activeAccount),400);
-  }else{ toast(res.error||'Failed to log visit','error'); }
-}
-
-/* ── STORE SUBMISSION ── */
-function openStoreSheet(a){
-  storeAccount=a; photoBase64=''; gpsLat=''; gpsLng='';
-  document.getElementById('storeAccNo').textContent=a.accountNo;
-  document.getElementById('storeAccName').textContent=a.name||'';
-  document.getElementById('gpsStatus').textContent='📍 Not captured yet';
-  document.getElementById('gpsStatus').className='gps-status';
-  document.getElementById('storeNotes').value='';
-  document.getElementById('photoPreview').style.display='none';
-  document.getElementById('photoPlaceholder').style.display='block';
-  document.getElementById('photoArea').classList.remove('has-photo');
-  document.getElementById('overlay').classList.add('open');
-  document.getElementById('storeSheet').classList.add('open');
-  document.body.style.overflow='hidden';
-}
-function closeStoreSheet(){
-  document.getElementById('storeSheet').classList.remove('open');
-  document.getElementById('overlay').classList.remove('open');
-  document.body.style.overflow='';
-}
-function handlePhoto(e){
-  const file=e.target.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    photoBase64=ev.target.result;
-    const prev=document.getElementById('photoPreview');
-    prev.src=photoBase64; prev.style.display='block';
-    document.getElementById('photoPlaceholder').style.display='none';
-    document.getElementById('photoArea').classList.add('has-photo');
-  };
-  reader.readAsDataURL(file);
-}
-function captureGPS(){
-  if(!navigator.geolocation){toast('Geolocation not supported','error');return;}
-  const btn=document.querySelector('.btn-gps');btn.textContent='⏳ Getting…';
-  navigator.geolocation.getCurrentPosition(pos=>{
-    gpsLat=pos.coords.latitude.toFixed(6);gpsLng=pos.coords.longitude.toFixed(6);
-    const s=document.getElementById('gpsStatus');
-    s.textContent='✅ '+gpsLat+', '+gpsLng; s.className='gps-status got';
-    btn.textContent='📡 Get GPS';
-  },err=>{toast('GPS error: '+err.message,'error');btn.textContent='📡 Get GPS';},{enableHighAccuracy:true,timeout:10000});
-}
-async function submitStoreReceipt(){
-  if(!storeAccount)return;
-  const notes=document.getElementById('storeNotes').value.trim();
-  const btn=document.getElementById('btnSubmitStore');btn.disabled=true;
-  showLoader('Submitting receipt…');
-  const res=await apiPost('submit_store',{city:session.city,staffId:session.staffId,accountNo:storeAccount.accountNo,photoBase64:photoBase64||null,latitude:gpsLat,longitude:gpsLng,storeNotes:notes,decision:'Accepted'});
-  hideLoader();btn.disabled=false;
-  if(res.success){
-    toast('Store submission complete!','success');
-    closeStoreSheet();
-    const idx=allAccounts.findIndex(x=>x.accountNo===storeAccount.accountNo);
-    if(idx!==-1)allAccounts[idx].status='Collected';
-    renderList();loadStoreQueue();
-  }else{toast(res.error||'Submission failed','error');}
-}
-
-/* ── STORE QUEUE TAB ── */
-async function loadStoreQueue(){
-  const res=await api({action:'get_store_queue',city:session.city,staffId:session.staffId});
-  const list=res.success?(res.data||[]):[];
-  const container=document.getElementById('storeList'),empty=document.getElementById('storeEmpty');
-  document.getElementById('storeCount').textContent=list.length+' pending submission'+(list.length!==1?'s':'');
-  if(!list.length){container.innerHTML='';empty.style.display='block';return;}
-  empty.style.display='none';
-  container.innerHTML=list.map(s=>`
-    <div class="store-card" onclick="openStoreSheet({accountNo:'${s.accountNo}',name:'${s.name||''}'})">
-      <div class="store-card-top">
-        <span class="store-accno">${s.accountNo}</span>
-        ${s.leakageFlag?'<span class="leakage-badge">⚠ OVERDUE</span>':''}
-      </div>
-      <div class="store-name">${s.name||'—'}</div>
-      <div class="store-meta">Collected: ${s.collectedDate||'—'} &nbsp;·&nbsp; Area: ${s.area||'—'}</div>
-    </div>`).join('');
-}
-
-/* ── TABS ── */
-function switchTab(tab){
+function switchTab(id, pageId){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.tab-page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
-  document.getElementById('page'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
+  document.getElementById('tabBtn_'+id).classList.add('active');
+  document.getElementById(pageId).classList.add('active');
 }
 
-/* ── UTILS ── */
+/* ── OVERVIEW ── */
+async function loadOverview(){
+  showLoader('Loading overview...');
+  const res=await api({action:'get_overview_report',city:session.city,period:'mtd'});
+  hideLoader();
+  if(res.success){
+    const d=res.data;
+    document.getElementById('ovTotal').textContent=   (d.pending||0)+(d.collected||0);
+    document.getElementById('ovCollected').textContent=d.collected||0;
+    document.getElementById('ovPending').textContent=  d.pending||0;
+    document.getElementById('ovIssues').textContent=   d.issues||0;
+    document.getElementById('ovCalls').textContent=    d.calls||0;
+    document.getElementById('ovAppts').textContent=    d.appts||0;
+    renderAlerts(d.alerts||[]);
+  }else{
+    // Demo fallback
+    document.getElementById('ovTotal').textContent='248';
+    document.getElementById('ovCollected').textContent='67';
+    document.getElementById('ovPending').textContent='142';
+    document.getElementById('ovIssues').textContent='12';
+    document.getElementById('ovCalls').textContent='389';
+    document.getElementById('ovAppts').textContent='94';
+    renderAlerts([
+      {type:'red',   title:'8 accounts pending >7 days', sub:'Requires immediate attention'},
+      {type:'amber', title:'3 accounts at Strike 2',      sub:'One more strike = blacklisted'},
+      {type:'blue',  title:'12 open issues',              sub:'Require resolution'},
+    ]);
+  }
+}
+
+function renderAlerts(alerts){
+  const el=document.getElementById('alertsList');
+  if(!alerts.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-text">No active alerts</div></div>';return;}
+  const colors={red:['var(--red-lt)','var(--red)','#fecaca'],amber:['var(--amber-lt)','var(--amber)','#fde68a'],blue:['var(--blue-lt)','var(--blue)','#93c5fd']};
+  el.innerHTML=alerts.map(a=>{
+    const[bg,fg,bd]=colors[a.type]||colors.blue;
+    return`<div style="background:${bg};border:1px solid ${bd};border-radius:12px;padding:14px 16px;margin-bottom:8px;">
+      <div style="font-size:14px;font-weight:700;color:${fg};font-family:var(--font-head);margin-bottom:2px;">${a.title}</div>
+      <div style="font-size:12px;color:var(--text2);">${a.sub}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ── STAFF ── */
+async function loadStaffList(){
+  showLoader('Loading staff...');
+  const res=await api({action:'get_staff',city:session.city});
+  hideLoader();
+  allStaff=res.success?(res.data||[]):demoStaff();
+  renderStaffList();
+}
+function renderStaffList(){
+  const q=(document.getElementById('staffSearch').value||'').toLowerCase();
+  const list=allStaff.filter(s=>!q||[s.staffId,s.staffName,s.role].join(' ').toLowerCase().includes(q));
+  const el=document.getElementById('staffList');
+  if(!list.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">👥</div><div class="empty-text">No staff found</div></div>';return;}
+  el.innerHTML=list.map(s=>`
+    <div class="data-row">
+      <div class="data-row-left">
+        <div class="data-row-title">${s.staffName||s.staffId} <span style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">${s.staffId}</span></div>
+        <div class="data-row-sub">${s.city||''} ${s.area?'· '+s.area:''}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <span class="data-row-badge ${roleBadge(s.role)}">${s.role}</span>
+        <span class="data-row-badge ${s.active?'badge-active':'badge-inactive'}">${s.active?'ACTIVE':'INACTIVE'}</span>
+      </div>
+    </div>`).join('');
+}
+function roleBadge(r){return{TELECALLER:'badge-tc',EXECUTIVE:'badge-exec',SUPERVISOR:'badge-sv',ADMIN:'badge-admin',OPS_MANAGER:'badge-om'}[r]||'badge-admin';}
+
+/* ── PENDING ── */
+async function loadPending(){
+  const res=await api({action:'get_pending',city:session.city});
+  allPending=res.success?(res.data||[]):demoPending();
+  renderPendingList();
+}
+function renderPendingList(){
+  const q=(document.getElementById('pendingSearch')?.value||'').toLowerCase();
+  const list=allPending.filter(p=>!q||[p.accountNo,p.name,p.area].join(' ').toLowerCase().includes(q));
+  document.getElementById('pendingCount').textContent=list.length+' pending account'+(list.length!==1?'s':'');
+  const el=document.getElementById('pendingList');
+  if(!list.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">⏳</div><div class="empty-text">No pending accounts</div></div>';return;}
+  el.innerHTML=list.map(p=>{
+    const days=p.agingDays||0;
+    const ag=days>=7?'aging-crit':days>=3?'aging-warn':'aging-ok';
+    return`<div class="issue-card ${days>=7?'aged':''}">
+      <div class="issue-card-top">
+        <div><div class="issue-accno">${p.accountNo}</div><div class="issue-name">${p.name||'—'}</div></div>
+        <span class="aging-badge ${ag}">${days}d old</span>
+      </div>
+      <div class="issue-meta">📍 ${p.area||'—'} &nbsp;·&nbsp; TC: ${p.telecallerStaffId||'—'} &nbsp;·&nbsp; EX: ${p.executiveStaffId||'—'} &nbsp;·&nbsp; Strikes: ${p.strikeCount||0}</div>
+      ${p.status?`<div style="margin-top:6px;"><span style="font-size:10px;padding:3px 8px;border-radius:20px;background:var(--accent-lt);color:var(--accent);font-family:var(--font-mono);font-weight:600;">${p.status}</span></div>`:''}
+    </div>`;
+  }).join('');
+}
+
+/* ── ISSUES ── */
+async function loadIssues(){
+  const res=await api({action:'get_issues',city:session.city});
+  allIssues=res.success?(res.data||[]):demoIssues();
+  renderIssuesList();
+}
+function renderIssuesList(){
+  document.getElementById('issuesCount').textContent=allIssues.length+' open issue'+(allIssues.length!==1?'s':'');
+  const el=document.getElementById('issuesList');
+  if(!allIssues.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-text">No open issues</div></div>';return;}
+  const typeColors={'Junction Box':'var(--amber)','Refund Request':'var(--red)','Mail Confirmation':'var(--blue)','Reconnection Request':'var(--cyan)','Address Change':'var(--purple)','Other':'var(--text2)'};
+  el.innerHTML=allIssues.map(i=>{
+    const color=typeColors[i.issueType]||'var(--text2)';
+    return`<div class="issue-card ${(i.agingDays||0)>=5?'aged':''}">
+      <div class="issue-card-top">
+        <div><div class="issue-accno">${i.accountNo}</div><div class="issue-name">${i.name||'—'}</div></div>
+        <span style="font-size:10px;padding:3px 9px;border-radius:20px;background:var(--accent-lt);color:${color};border:1px solid ${color}25;font-family:var(--font-mono);font-weight:600;">${i.issueType}</span>
+      </div>
+      <div class="issue-meta">📍 ${i.area||'—'} &nbsp;·&nbsp; Raised: ${i.dateRaised||'—'} &nbsp;·&nbsp; ${i.agingDays||0}d ago</div>
+    </div>`;
+  }).join('');
+}
+
+/* ── TEAM PERFORMANCE (SUPERVISOR) ── */
+async function loadTeamPerf(){
+  const res=await api({action:'get_staff_performance_report',city:session.city,period:'mtd'});
+  if(res.success){
+    renderTCPerf(res.data.telecallers||[]);
+    renderExecPerf(res.data.executives||[]);
+  }else{renderTCPerf(demoTCPerf());renderExecPerf(demoExecPerf());}
+}
+function renderTCPerf(list){
+  const el=document.getElementById('tcPerfList');
+  if(!list.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">📞</div><div class="empty-text">No data</div></div>';return;}
+  el.innerHTML=list.map(t=>{
+    const pct=Math.min(100,Math.round(((t.closures||0)/30)*100));
+    return`<div class="data-row" style="flex-direction:column;align-items:stretch;gap:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><div style="font-size:14px;font-weight:600;color:var(--text);">${t.staffName||t.staffId}</div>
+          <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">${t.staffId}</div></div>
+        <div style="text-align:right;">
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--accent);">${t.closures||0}</div>
+          <div style="font-size:10px;color:var(--text3);">closures</div>
+        </div>
+      </div>
+      <div style="background:var(--bg3);border-radius:4px;height:6px;overflow:hidden;">
+        <div style="height:100%;width:${pct}%;background:var(--accent);border-radius:4px;transition:width .6s;"></div>
+      </div>
+      <div style="display:flex;gap:12px;font-size:11px;color:var(--text3);font-family:var(--font-mono);">
+        <span>Calls: <b style="color:var(--text);">${t.calls||0}</b></span>
+        <span>Appts: <b style="color:var(--green);">${t.appts||0}</b></span>
+        <span>Target: 30 &nbsp;(${pct}%)</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+function renderExecPerf(list){
+  const el=document.getElementById('execPerfList');
+  if(!list.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">🚴</div><div class="empty-text">No data</div></div>';return;}
+  el.innerHTML=list.map((e,idx)=>`
+    <div class="data-row">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--accent-lt);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:13px;font-weight:800;color:var(--accent);">${idx+1}</div>
+        <div><div style="font-size:14px;font-weight:600;color:var(--text);">${e.staffName||e.staffId}</div>
+          <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">${e.staffId}</div></div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--green);">${e.collected||0}</div>
+        <div style="font-size:10px;color:var(--text3);">collected</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ── ACTIONS ── */
+async function doCreateStaff(){
+  const body={city:document.getElementById('csCity').value,role:document.getElementById('csRole').value,staffName:document.getElementById('csName').value.trim(),pin:document.getElementById('csPin').value.trim(),area:document.getElementById('csArea').value.trim()};
+  if(!body.staffName||!body.pin){toast('Fill all required fields','error');return;}
+  showLoader('Creating staff...');
+  const res=await apiPost('create_staff',body);
+  hideLoader();
+  if(res.success){toast('Staff created: '+res.data.staffId,'success');closeSheet();loadStaffList();}
+  else{toast(res.error||'Failed to create staff','error');}
+}
+async function doResetPin(){
+  const targetStaffId=document.getElementById('rpStaffId').value.trim().toUpperCase();
+  const newPin=document.getElementById('rpPin').value.trim();
+  if(!targetStaffId||!newPin){toast('Fill all fields','error');return;}
+  showLoader('Resetting PIN...');
+  const res=await apiPost('reset_pin',{city:session.city,targetStaffId,newPin});
+  hideLoader();
+  if(res.success){toast('PIN reset for '+targetStaffId,'success');closeSheet();}
+  else{toast(res.error||'Failed to reset PIN','error');}
+}
+async function doToggleStaff(){
+  const targetStaffId=document.getElementById('tsStaffId').value.trim().toUpperCase();
+  const active=document.getElementById('tsStatus').value==='true';
+  showLoader('Updating status...');
+  const res=await apiPost('toggle_staff',{city:session.city,targetStaffId,active});
+  hideLoader();
+  if(res.success){toast('Status updated for '+targetStaffId,'success');closeSheet();loadStaffList();}
+  else{toast(res.error||'Failed','error');}
+}
+async function doUploadBase(){
+  const batchNo=document.getElementById('ubBatch').value.trim();
+  const sourceTab=document.getElementById('ubSource').value.trim();
+  const city=document.getElementById('ubCity').value;
+  if(!batchNo){toast('Enter batch label','error');return;}
+  showLoader('Running pipeline...');
+  const res=await apiPost('upload_base',{city,batchNo,sourceTab});
+  hideLoader();
+  if(res.success){toast('Base uploaded — '+res.data.workable+' workable accounts','success');closeSheet();}
+  else{toast(res.error||'Pipeline failed','error');}
+}
+async function doAssignTC(){
+  const batchNo=document.getElementById('atBatch').value.trim();
+  const telecallerStaffId=document.getElementById('atTCId').value.trim().toUpperCase();
+  const city=document.getElementById('atCity').value;
+  if(!batchNo||!telecallerStaffId){toast('Fill all fields','error');return;}
+  showLoader('Assigning telecaller...');
+  const res=await apiPost('assign_telecaller',{city,batchNo,telecallerStaffId});
+  hideLoader();
+  if(res.success){toast('Telecaller assigned to batch','success');closeSheet();}
+  else{toast(res.error||'Failed','error');}
+}
+async function doAutoAssign(){
+  const city=document.getElementById('aaCity').value;
+  showLoader('Auto assigning executives...');
+  const res=await apiPost('auto_assign_execs',{city});
+  hideLoader();
+  if(res.success){toast('Execs auto-assigned by area','success');closeSheet();}
+  else{toast(res.error||'Failed','error');}
+}
+async function doReassign(){
+  const accountNo=document.getElementById('reassignAccNo').value.trim().toUpperCase();
+  const toStaffId=document.getElementById('reassignTo').value.trim().toUpperCase();
+  const reason=document.getElementById('reassignReason').value.trim();
+  if(!accountNo||!toStaffId){toast('Enter account no and staff ID','error');return;}
+  showLoader('Reassigning...');
+  const res=await apiPost('reassign_account',{city:session.city,accountNo,toStaffId,reason});
+  hideLoader();
+  if(res.success){toast('Account reassigned to '+toStaffId,'success');document.getElementById('reassignAccNo').value='';document.getElementById('reassignTo').value='';document.getElementById('reassignReason').value='';}
+  else{toast(res.error||'Failed to reassign','error');}
+}
+async function doSaveAreaMap(){
+  const area=document.getElementById('amArea').value.trim();
+  const executiveStaffId=document.getElementById('amExecId').value.trim().toUpperCase();
+  if(!area||!executiveStaffId){toast('Enter area and exec ID','error');return;}
+  showLoader('Saving mapping...');
+  const res=await apiPost('set_fx_area_mapping',{city:session.city,area,executiveStaffId});
+  hideLoader();
+  if(res.success){toast('Mapping saved','success');document.getElementById('amArea').value='';document.getElementById('amExecId').value='';}
+  else{toast(res.error||'Failed','error');}
+}
+
+/* ── SHEET UTILS ── */
 function openSheet(id){document.getElementById('overlay').classList.add('open');document.getElementById(id).classList.add('open');document.body.style.overflow='hidden';}
 function closeSheet(){document.getElementById('overlay').classList.remove('open');document.querySelectorAll('.bottom-sheet').forEach(s=>s.classList.remove('open'));document.body.style.overflow='';}
-function callNum(m){if(m)window.location.href='tel:'+m;}
-function openWA(m,name,accNo){if(!m)return;const num='91'+m.replace(/\D/g,'');const msg=encodeURIComponent('Hi '+name+', this is regarding your ACT Fiber router (Account: '+accNo+'). Please arrange for return.');window.open('https://wa.me/'+num+'?text='+msg,'_blank');}
+
+/* ── LOADER / TOAST ── */
 function showLoader(t){document.getElementById('loaderText').textContent=t||'Loading...';document.getElementById('loader').classList.add('show');}
 function hideLoader(){document.getElementById('loader').classList.remove('show');}
-let _tt;function toast(msg,type){clearTimeout(_tt);const el=document.getElementById('toast');el.textContent=msg;el.className='toast '+(type||'');requestAnimationFrame(()=>el.classList.add('show'));_tt=setTimeout(()=>el.classList.remove('show'),3000);}
-function doLogout(){session=null;allAccounts=[];document.getElementById('app').style.display='none';document.getElementById('loginScreen').style.display='flex';document.getElementById('loginPin').value='';closeSheet();}
+let _tt;function toast(msg,type){clearTimeout(_tt);const el=document.getElementById('toast');el.textContent=msg;el.className='toast '+(type||'');requestAnimationFrame(()=>el.classList.add('show'));_tt=setTimeout(()=>el.classList.remove('show'),3200);}
+function doLogout(){session=null;allStaff=[];allPending=[];allIssues=[];document.getElementById('app').style.display='none';document.getElementById('loginScreen').style.display='flex';document.getElementById('loginPin').value='';closeSheet();}
 
 /* ── DEMO DATA ── */
-function demoAccounts(){return[
-  {accountNo:'ACT001234',name:'Rajesh Kumar',  mobile:'9876543210',address:'12 RS Puram Main Rd',    area:'RS Puram',      city:'CBE',status:'Appt Fixed', batchNo:'VOA_MAR_2026_1',strikeCount:0,apptDate:'12 Mar 2026',tcRemark:'Customer available after 6pm'},
-  {accountNo:'ACT005678',name:'Priya Suresh',  mobile:'9876501234',address:'45 Tatabad Cross St',    area:'Tatabad',       city:'CBE',status:'Not Visited',batchNo:'VOA_MAR_2026_1',strikeCount:1,apptDate:'',tcRemark:''},
-  {accountNo:'ACT009012',name:'Murugan Selvam',mobile:'9843210987',address:'8 Gandhipuram Ring Rd',  area:'Gandhipuram',   city:'CBE',status:'Rescheduled',batchNo:'VOA_MAR_2026_1',strikeCount:0,apptDate:'14 Mar 2026',tcRemark:'Ask for morning visit'},
-  {accountNo:'ACT013456',name:'Kavitha Rajan', mobile:'9791234567',address:'67 Peelamedu Lake View', area:'Peelamedu',     city:'CBE',status:'Issue',       batchNo:'VOA_MAR_2026_1',strikeCount:2,apptDate:'',tcRemark:'Junction box issue'},
-  {accountNo:'ACT017890',name:'Anand Krishnan',mobile:'9865432109',address:'23 Saibaba Colony',      area:'Saibaba Colony',city:'CBE',status:'Appt Fixed', batchNo:'VOA_MAR_2026_1',strikeCount:0,apptDate:'13 Mar 2026',tcRemark:''},
+function demoStaff(){return[
+  {staffId:'AD_001',staffName:'Admin',role:'ADMIN',city:'CBE',area:'',active:true},
+  {staffId:'SV_001',staffName:'Supervisor',role:'SUPERVISOR',city:'CBE',area:'ALL',active:true},
+  {staffId:'TC_001',staffName:'Telecaller 1',role:'TELECALLER',city:'CBE',area:'',active:true},
+  {staffId:'TC_002',staffName:'Telecaller 2',role:'TELECALLER',city:'CBE',area:'',active:true},
+  {staffId:'TC_003',staffName:'Telecaller 3',role:'TELECALLER',city:'CBE',area:'',active:false},
+  {staffId:'EX_001',staffName:'Executive 1',role:'EXECUTIVE',city:'CBE',area:'RS Puram, Tatabad',active:true},
+  {staffId:'EX_002',staffName:'Executive 2',role:'EXECUTIVE',city:'CBE',area:'Peelamedu',active:true},
+];}
+function demoPending(){return[
+  {accountNo:'ACT001234',name:'Rajesh Kumar',area:'RS Puram',telecallerStaffId:'TC_001',executiveStaffId:'EX_001',strikeCount:0,agingDays:2,status:'Appt Fixed'},
+  {accountNo:'ACT005678',name:'Priya Suresh',area:'Tatabad',telecallerStaffId:'TC_002',executiveStaffId:'EX_001',strikeCount:1,agingDays:8,status:'Not Visited'},
+  {accountNo:'ACT009012',name:'Murugan Selvam',area:'Gandhipuram',telecallerStaffId:'TC_001',executiveStaffId:'EX_003',strikeCount:2,agingDays:12,status:'Rescheduled'},
+];}
+function demoIssues(){return[
+  {accountNo:'ACT013456',name:'Kavitha Rajan',area:'Peelamedu',issueType:'Junction Box',dateRaised:'08 Mar 2026',agingDays:3},
+  {accountNo:'ACT021234',name:'Suresh Babu',area:'Saibaba Colony',issueType:'Refund Request',dateRaised:'06 Mar 2026',agingDays:5},
+  {accountNo:'ACT034567',name:'Meena Devi',area:'Singanallur',issueType:'Reconnection Request',dateRaised:'04 Mar 2026',agingDays:7},
+];}
+function demoTCPerf(){return[
+  {staffId:'TC_001',staffName:'Telecaller 1',closures:18,calls:112,appts:24},
+  {staffId:'TC_002',staffName:'Telecaller 2',closures:14,calls:87,appts:19},
+  {staffId:'TC_003',staffName:'Telecaller 3',closures:9, calls:63,appts:11},
+];}
+function demoExecPerf(){return[
+  {staffId:'EX_001',staffName:'Executive 1',collected:24},
+  {staffId:'EX_002',staffName:'Executive 2',collected:19},
+  {staffId:'EX_003',staffName:'Executive 3',collected:14},
+  {staffId:'EX_004',staffName:'Executive 4',collected:10},
 ];}
 
 document.getElementById('loginPin').addEventListener('keyup',e=>{if(e.key==='Enter')doLogin();});
