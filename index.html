@@ -2,794 +2,381 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>CollectPro — Admin Panel</title>
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22CollectPro+Admin%22%2C%22short_name%22%3A%22Admin%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23ffffff%22%2C%22theme_color%22%3A%22%230d1b2a%22%2C%22orientation%22%3A%22portrait%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg+xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'+viewBox%3D'0+0+192+192'%253E%253Crect+width%3D'192'+height%3D'192'+rx%3D'32'+fill%3D'%25230d1b2a'%2F%253E%253Ctext+y%3D'130'+x%3D'50%25'+text-anchor%3D'middle'+font-size%3D'110'+fill%3D'%23f97316'%253E%25E2%2598%25B0%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>VOA Admin Panel v1.5.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#0d1b2a;--surface:#112240;--surface2:#1a3a5c;--border:#1e4976;
-  --orange:#f97316;--orange-lt:rgba(249,115,22,.12);
-  --green:#22c55e;--green-lt:rgba(34,197,94,.12);
-  --red:#ef4444;--red-lt:rgba(239,68,68,.12);
-  --blue:#3b82f6;--blue-lt:rgba(59,130,246,.12);
-  --amber:#f59e0b;--amber-lt:rgba(245,158,11,.12);
-  --text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;
-  --radius:12px;--radius-sm:8px;
-}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;font-size:14px}
-
-/* ── LOGIN ── */
-#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;gap:20px}
-.login-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px 28px;width:100%;max-width:380px}
-.login-logo{text-align:center;margin-bottom:24px}
-.login-logo .icon{font-size:48px;display:block;margin-bottom:8px}
-.login-logo h1{font-size:20px;font-weight:700;color:var(--orange)}
-.login-logo p{font-size:12px;color:var(--text2);margin-top:4px}
-.field{margin-bottom:16px}
-.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
-.field select,.field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;color:var(--text);font-size:14px;outline:none}
-.field select:focus,.field input:focus{border-color:var(--orange)}
-.btn{width:100%;padding:12px;border-radius:var(--radius-sm);border:none;font-size:14px;font-weight:600;cursor:pointer;transition:.2s}
-.btn-primary{background:var(--orange);color:#fff}
-.btn-primary:active{opacity:.85}
-.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
-.login-error{background:var(--red-lt);border:1px solid rgba(220,38,38,.2);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--red);margin-top:12px;display:none}
-
-/* ── APP SHELL ── */
-#appScreen{display:none;flex-direction:column;min-height:100vh}
-.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.topbar-left{display:flex;align-items:center;gap:10px}
-.topbar-icon{font-size:22px}
-.topbar-title{font-size:15px;font-weight:700;color:var(--orange)}
-.topbar-sub{font-size:11px;color:var(--text2)}
-.logout-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:5px 10px;border-radius:var(--radius-sm);font-size:12px;cursor:pointer}
-
-/* ── TABS ── */
-.tab-bar{background:var(--surface);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 8px}
-.tab-bar::-webkit-scrollbar{display:none}
-.tab-btn{padding:13px 16px;font-size:12px;font-weight:600;color:var(--text2);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0}
-.tab-btn.active{color:var(--orange);border-bottom-color:var(--orange)}
-
-/* ── PANELS ── */
-.panel{display:none;padding:16px;flex:1}
-.panel.active{display:block}
-
-/* ── CARDS ── */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
-.card-title{font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
-.stat{background:var(--surface2);border-radius:var(--radius-sm);padding:12px 10px;text-align:center}
-.stat-val{font-size:22px;font-weight:800;color:var(--orange)}
-.stat-lbl{font-size:11px;color:var(--text2);margin-top:2px}
-
-/* ── TABLES ── */
-.tbl-wrap{overflow-x:auto;border-radius:var(--radius-sm)}
-table{width:100%;border-collapse:collapse;font-size:12px}
-thead th{background:var(--surface2);padding:9px 10px;text-align:left;color:var(--text2);font-weight:600;white-space:nowrap}
-tbody tr{border-bottom:1px solid var(--border)}
-tbody tr:last-child{border-bottom:none}
-tbody td{padding:9px 10px;vertical-align:middle}
-
-/* ── BADGES ── */
-.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
-.badge-green{background:var(--green-lt);color:var(--green)}
-.badge-red{background:var(--red-lt);color:var(--red)}
-.badge-amber{background:var(--amber-lt);color:var(--amber)}
-.badge-blue{background:var(--blue-lt);color:var(--blue)}
-.badge-orange{background:var(--orange-lt);color:var(--orange)}
-
-/* ── FORMS ── */
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-.form-row.full{grid-template-columns:1fr}
-.form-field label{display:block;font-size:11px;color:var(--text2);margin-bottom:4px;font-weight:600}
-.form-field select,.form-field input,.form-field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;color:var(--text);font-size:13px;outline:none}
-.form-field select:focus,.form-field input:focus{border-color:var(--orange)}
-.btn-sm{padding:7px 14px;border-radius:var(--radius-sm);border:none;font-size:12px;font-weight:600;cursor:pointer}
-.btn-orange{background:var(--orange);color:#fff}
-.btn-red{background:var(--red-lt);color:var(--red);border:1px solid rgba(239,68,68,.3)}
-.btn-green{background:var(--green-lt);color:var(--green);border:1px solid rgba(34,197,94,.3)}
-.btn-blue{background:var(--blue-lt);color:var(--blue);border:1px solid rgba(59,130,246,.3)}
-
-/* ── UPLOAD ZONE ── */
-.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:28px;text-align:center;cursor:pointer;transition:.2s}
-.upload-zone:hover,.upload-zone.drag{border-color:var(--orange);background:var(--orange-lt)}
-.upload-zone .icon{font-size:36px;margin-bottom:8px}
-.upload-zone p{color:var(--text2);font-size:13px}
-.upload-zone input[type=file]{display:none}
-
-/* ── TOAST ── */
-#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:#1e293b;color:#fff;padding:11px 20px;border-radius:50px;font-size:13px;font-weight:500;z-index:9999;transition:.3s;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.4)}
-#toast.show{transform:translateX(-50%) translateY(0)}
-#toast.ok{background:var(--green)}
-#toast.error{background:var(--red)}
-
-/* ── LOADER ── */
-.loader{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px}
+:root{--bg:#faf8ff;--bg2:#ffffff;--bg3:#f3f0ff;--card:#ffffff;--border:#e5e0f8;--border2:#cfc8f0;--accent:#7c3aed;--accent-lt:#f5f3ff;--accent-md:#8b5cf6;--accent-dk:#6d28d9;--blue:#3b82f6;--blue-lt:#eff6ff;--green:#16a34a;--green-lt:#f0fdf4;--red:#dc2626;--red-lt:#fef2f2;--amber:#d97706;--amber-lt:#fffbeb;--cyan:#0891b2;--cyan-lt:#ecfeff;--orange:#f97316;--orange-lt:#fff4ed;--text:#1a0f3c;--text2:#4c3d7a;--text3:#9b8ec4;--shadow-sm:0 1px 3px rgba(124,58,237,.06),0 1px 2px rgba(0,0,0,.04);--shadow:0 4px 16px rgba(124,58,237,.1);--shadow-lg:0 8px 32px rgba(124,58,237,.14);--radius:14px;--font-head:'Sora',sans-serif;--font-mono:'JetBrains Mono',monospace;--font-body:'Plus Jakarta Sans',sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;overflow-x:hidden;}
+.header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 16px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm);}
+.header-brand{display:flex;align-items:center;gap:10px;}
+.brand-logo{width:36px;height:36px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:800;font-size:13px;color:#fff;box-shadow:0 2px 8px rgba(124,58,237,.3);}
+.brand-name{font-family:var(--font-head);font-size:17px;font-weight:700;color:var(--text);}
+.brand-role{font-family:var(--font-mono);font-size:10px;color:var(--accent);background:var(--accent-lt);padding:3px 9px;border-radius:20px;border:1px solid rgba(124,58,237,.2);letter-spacing:.5px;}
+.staff-badge{font-family:var(--font-mono);font-size:11px;color:var(--text2);background:var(--bg3);padding:5px 10px;border-radius:8px;border:1px solid var(--border);}
+.logout-btn{background:none;border:1px solid var(--border);border-radius:8px;color:var(--text3);cursor:pointer;padding:5px 10px;font-size:12px;font-family:var(--font-body);transition:all .2s;}
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#f5f3ff 0%,#faf8ff 55%,#fff 100%);padding:24px;}
+.login-card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:44px 36px;width:100%;max-width:400px;box-shadow:var(--shadow-lg);animation:fadeUp .4s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.login-logo-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:36px;}
+.login-logo{width:72px;height:72px;background:linear-gradient(135deg,var(--accent-md),var(--accent-dk));border-radius:20px;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:800;font-size:26px;color:#fff;box-shadow:0 8px 28px rgba(124,58,237,.28);}
+.login-title{font-family:var(--font-head);font-size:24px;font-weight:700;color:var(--text);}
+.login-sub{font-size:13px;color:var(--text3);text-align:center;}
+.form-group{margin-bottom:18px;}
+.form-label{font-size:11px;font-family:var(--font-mono);letter-spacing:1px;color:var(--text3);margin-bottom:8px;display:block;text-transform:uppercase;}
+.form-input,.form-select{width:100%;background:var(--bg3);border:1.5px solid var(--border);border-radius:12px;padding:13px 15px;color:var(--text);font-family:var(--font-body);font-size:15px;outline:none;transition:all .2s;-webkit-appearance:none;}
+.form-input:focus,.form-select:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(124,58,237,.1);}
+.btn-login{width:100%;padding:15px;background:linear-gradient(135deg,var(--accent-md),var(--accent-dk));border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(124,58,237,.28);transition:all .2s;margin-top:8px;}
+.btn-login:active{transform:scale(.98);}
+.login-error{background:var(--red-lt);border:1px solid rgba(220,38,38,.2);border-radius:10px;padding:11px 14px;font-size:13px;color:var(--red);margin-top:12px;display:none;}
+.tab-nav{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:58px;z-index:90;overflow-x:auto;scrollbar-width:none;box-shadow:var(--shadow-sm);}
+.tab-nav::-webkit-scrollbar{display:none;}
+.tab-btn{flex-shrink:0;padding:13px 16px;border:none;background:none;font-family:var(--font-head);font-size:13px;font-weight:600;color:var(--text3);cursor:pointer;letter-spacing:.3px;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+.tab-page{display:none;padding:16px;}
+.tab-page.active{display:block;}
+.section-title{font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.section-sub{font-size:12px;color:var(--text3);margin-bottom:16px;}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow-sm);}
+.stat-icon{font-size:20px;margin-bottom:8px;}
+.stat-val{font-family:var(--font-head);font-size:28px;font-weight:800;line-height:1;}
+.stat-card.purple .stat-val{color:var(--accent);}
+.stat-card.green .stat-val{color:var(--green);}
+.stat-card.amber .stat-val{color:var(--amber);}
+.stat-card.red .stat-val{color:var(--red);}
+.stat-card.blue .stat-val{color:var(--blue);}
+.stat-card.cyan .stat-val{color:var(--cyan);}
+.stat-lbl{font-size:11px;color:var(--text3);margin-top:4px;font-weight:500;}
+.action-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px;}
+.action-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:18px 14px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow-sm);text-align:center;}
+.action-card:hover{border-color:rgba(124,58,237,.4);box-shadow:var(--shadow);transform:translateY(-1px);}
+.action-card:active{transform:scale(.98);}
+.action-icon{font-size:28px;margin-bottom:10px;}
+.action-label{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--text);}
+.action-sub{font-size:11px;color:var(--text3);margin-top:3px;}
+.data-list{display:flex;flex-direction:column;gap:8px;}
+.data-row{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow-sm);transition:all .2s;}
+.data-row-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.data-row-sub{font-size:11px;color:var(--text3);font-family:var(--font-mono);}
+.data-row-badge{font-family:var(--font-mono);font-size:10px;letter-spacing:.5px;padding:4px 10px;border-radius:20px;font-weight:600;white-space:nowrap;}
+.badge-active{background:var(--green-lt);color:var(--green);border:1px solid #86efac;}
+.badge-inactive{background:var(--red-lt);color:var(--red);border:1px solid #fecaca;}
+.badge-tc{background:var(--orange-lt);color:var(--orange);border:1px solid rgba(249,115,22,.3);}
+.badge-exec{background:var(--cyan-lt);color:var(--cyan);border:1px solid rgba(8,145,178,.3);}
+.badge-sv{background:var(--accent-lt);color:var(--accent);border:1px solid rgba(124,58,237,.3);}
+.badge-admin{background:var(--accent-lt);color:var(--accent-dk);border:1px solid rgba(109,40,217,.3);}
+.badge-om{background:var(--blue-lt);color:var(--blue);border:1px solid #93c5fd;}
+.sheet-overlay{position:fixed;inset:0;background:rgba(26,15,60,.4);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px);}
+.sheet-overlay.open{opacity:1;pointer-events:all;}
+.bottom-sheet{position:fixed;bottom:0;left:0;right:0;z-index:201;background:var(--card);border-radius:28px 28px 0 0;border-top:1px solid var(--border);box-shadow:0 -8px 40px rgba(124,58,237,.12);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);max-height:92vh;display:flex;flex-direction:column;}
+.bottom-sheet.open{transform:translateY(0);}
+.sheet-handle{display:flex;justify-content:center;padding:14px 0 6px;}
+.sheet-handle-bar{width:40px;height:4px;background:var(--border2);border-radius:2px;}
+.sheet-header{padding:0 20px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);}
+.sheet-title{font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--text);}
+.sheet-close{width:32px;height:32px;background:var(--bg3);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--text2);}
+.sheet-body{flex:1;overflow-y:auto;padding:20px 20px 36px;}
+.field-group{margin-bottom:16px;}
+.field-label{font-size:11px;font-family:var(--font-mono);letter-spacing:1px;color:var(--text3);margin-bottom:8px;display:block;text-transform:uppercase;}
+.field-input,.field-select{width:100%;background:var(--bg3);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-family:var(--font-body);font-size:14px;outline:none;transition:all .2s;-webkit-appearance:none;}
+.field-input:focus,.field-select:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(124,58,237,.1);}
+.btn-primary{width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--accent-md),var(--accent-dk));border:none;color:#fff;font-family:var(--font-head);font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(124,58,237,.25);transition:all .2s;margin-top:8px;}
+.btn-primary:active{transform:scale(.98);}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed;}
+.btn-secondary{width:100%;padding:13px;border-radius:12px;background:var(--accent-lt);border:1.5px solid rgba(124,58,237,.25);color:var(--accent);font-family:var(--font-head);font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:8px;}
+.issue-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:8px;box-shadow:var(--shadow-sm);}
+.issue-card.aged{border-left:3px solid var(--red);}
+.issue-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
+.issue-accno{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--accent);}
+.issue-name{font-size:13px;color:var(--text);font-weight:500;margin-bottom:2px;}
+.issue-meta{font-size:11px;color:var(--text3);font-family:var(--font-mono);}
+.aging-badge{font-size:9px;padding:3px 8px;border-radius:20px;font-family:var(--font-mono);font-weight:600;}
+.aging-ok{background:var(--green-lt);color:var(--green);border:1px solid #86efac;}
+.aging-warn{background:var(--amber-lt);color:var(--amber);border:1px solid #fde68a;}
+.aging-crit{background:var(--red-lt);color:var(--red);border:1px solid #fecaca;}
+.cp-stat-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.cp-stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 10px;text-align:center;box-shadow:var(--shadow-sm);}
+.cp-stat-val{font-family:var(--font-head);font-size:26px;font-weight:800;}
+.cp-stat-lbl{font-size:10px;color:var(--text3);margin-top:3px;}
+.cp-filter-bar{display:flex;gap:8px;flex-wrap:wrap;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow-sm);}
+.cp-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;box-shadow:var(--shadow-sm);}
+.cp-card.overdue{border-left:3px solid var(--red);}
+.cp-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.cp-accno{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--accent);}
+.cp-name{font-size:13px;color:var(--text);font-weight:600;margin-top:2px;}
+.cp-meta{font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px;line-height:1.6;}
+.cp-reason-badge{font-family:var(--font-mono);font-size:9px;letter-spacing:.5px;padding:3px 9px;border-radius:20px;font-weight:700;}
+.cp-issue{background:var(--red-lt);color:var(--red);border:1px solid #fecaca;}
+.cp-line{background:var(--blue-lt);color:var(--blue);border:1px solid #93c5fd;}
+.cp-safe{background:var(--amber-lt);color:var(--amber);border:1px solid #fde68a;}
+.cp-reactiv{background:var(--accent-lt);color:var(--accent);border:1px solid rgba(124,58,237,.3);}
+.cp-released{background:var(--green-lt);color:var(--green);border:1px solid #86efac;}
+.btn-release{padding:9px 18px;border-radius:10px;background:linear-gradient(135deg,var(--accent-md),var(--accent-dk));border:none;color:#fff;font-family:var(--font-head);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(124,58,237,.25);}
+.search-wrap{margin-bottom:12px;}
+.search-box{display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:11px 14px;box-shadow:var(--shadow-sm);transition:all .2s;}
+.search-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,58,237,.1);}
+.search-input{flex:1;background:none;border:none;outline:none;color:var(--text);font-family:var(--font-body);font-size:14px;}
+.search-input::placeholder{color:var(--text3);}
+.divider{height:1px;background:var(--border);margin:20px 0;}
+.sub-label{font-family:var(--font-mono);font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
+.loading-overlay{position:fixed;inset:0;background:rgba(250,248,255,.9);z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;}
+.loading-overlay.show{display:flex;}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-.section-loader{text-align:center;padding:32px;color:var(--text2)}
-
-/* ── MODALS ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:flex-end;justify-content:center}
-.modal-overlay.show{display:flex}
-.modal{background:var(--surface);border-radius:var(--radius) var(--radius) 0 0;padding:20px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
-.modal-title{font-size:15px;font-weight:700;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
-.modal-close{background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer}
-
-/* ── DIVIDER ── */
-.divider{height:1px;background:var(--border);margin:14px 0}
-.empty{text-align:center;padding:32px;color:var(--text3);font-size:13px}
+.loading-text{font-family:var(--font-mono);font-size:13px;color:var(--text2);}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);z-index:400;background:var(--text);color:#fff;border-radius:14px;padding:13px 22px;font-size:14px;font-weight:500;white-space:nowrap;box-shadow:var(--shadow-lg);transition:transform .3s cubic-bezier(.4,0,.2,1);pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.success{background:var(--green);}
+.toast.error{background:var(--red);}
+.empty-state{text-align:center;padding:48px 20px;}
+.empty-icon{font-size:44px;margin-bottom:10px;opacity:.35;}
+.empty-text{font-size:15px;color:var(--text2);font-weight:600;}
+.empty-sub{font-size:13px;color:var(--text3);margin-top:6px;}
 </style>
 </head>
 <body>
-
-<!-- ════════════════ LOGIN ════════════════ -->
-<div id="loginScreen">
+<div class="loading-overlay" id="loader"><div class="spinner"></div><div class="loading-text" id="loaderText">Loading...</div></div>
+<div class="toast" id="toast"></div>
+<div class="login-screen" id="loginScreen">
   <div class="login-card">
-    <div class="login-logo">
-      <span class="icon">☰</span>
-      <h1>CollectPro Admin</h1>
-      <p>Vibrant Owl Agencies · v1.3.0</p>
+    <div class="login-logo-wrap">
+      <div class="login-logo">VOA</div>
+      <div class="login-title">Admin Panel</div>
+      <div class="login-sub">Admin &middot; Supervisor &middot; Operations Manager</div>
     </div>
-    <div class="field">
-      <label>Staff ID</label>
-      <input id="loginStaffId" placeholder="AD_001 or OW_001" autocomplete="username" />
-    </div>
-    <div class="field">
-      <label>PIN</label>
-      <input id="loginPin" type="password" placeholder="Enter PIN" autocomplete="current-password" />
-    </div>
-    <button class="btn btn-primary" onclick="doLogin()">Login</button>
+    <div class="form-group"><label class="form-label">City</label><select class="form-select" id="loginCity"><option value="CBE">Coimbatore (CBE)</option><option value="CHN">Chennai (CHN)</option></select></div>
+    <div class="form-group"><label class="form-label">Staff ID</label><input class="form-input" id="loginStaffId" type="text" placeholder="e.g. AD_001" autocomplete="off"></div>
+    <div class="form-group"><label class="form-label">PIN</label><input class="form-input" id="loginPin" type="password" inputmode="numeric" placeholder="4-digit PIN" maxlength="4"></div>
     <div class="login-error" id="loginError"></div>
+    <button class="btn-login" onclick="doLogin()">Login &rarr;</button>
   </div>
 </div>
-
-<!-- ════════════════ APP ════════════════ -->
-<div id="appScreen">
-  <div class="topbar">
-    <div class="topbar-left">
-      <span class="topbar-icon">☰</span>
-      <div>
-        <div class="topbar-title">Admin Panel</div>
-        <div class="topbar-sub" id="topbarSub">CollectPro v1.3.0</div>
-      </div>
+<div id="app" style="display:none;">
+  <div class="header">
+    <div class="header-brand">
+      <div class="brand-logo">VOA</div>
+      <span class="brand-name">VOA</span>
+      <span class="brand-role" id="headerRole">ADMIN</span>
     </div>
-    <button class="logout-btn" onclick="doLogout()">Logout</button>
-  </div>
-
-  <div class="tab-bar">
-    <button class="tab-btn active" onclick="switchTab('base')">📥 Base Upload</button>
-    <button class="tab-btn" onclick="switchTab('assign')">🔁 Assign</button>
-    <button class="tab-btn" onclick="switchTab('staff')">👥 Staff</button>
-    <button class="tab-btn" onclick="switchTab('store')">🏪 Store</button>
-    <button class="tab-btn" onclick="switchTab('reports')">📊 Reports</button>
-  </div>
-
-  <!-- ── BASE UPLOAD ── -->
-  <div class="panel active" id="panel-base">
-    <div class="card">
-      <div class="card-title">📥 Upload ACT Base File</div>
-      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()"
-           ondragover="event.preventDefault();this.classList.add('drag')"
-           ondragleave="this.classList.remove('drag')"
-           ondrop="handleDrop(event)">
-        <div class="icon">📂</div>
-        <p id="uploadLabel">Tap to select Excel or CSV file<br><small>Accepts .xlsx, .csv</small></p>
-        <input type="file" id="fileInput" accept=".xlsx,.csv" onchange="handleFileSelect(event)">
-      </div>
-      <div id="filePreview" style="display:none;margin-top:12px">
-        <div class="divider"></div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:10px" id="previewSummary"></div>
-        <button class="btn-sm btn-orange" onclick="submitBase()" id="uploadBtn">⬆ Push to System</button>
-      </div>
-    </div>
-    <div class="card" id="uploadResult" style="display:none">
-      <div class="card-title">✅ Upload Result</div>
-      <div id="uploadResultBody"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">📋 Batch Log</div>
-      <div id="batchLogBody"><div class="section-loader">Loading…</div></div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="staff-badge" id="headerBadge">AD_000</div>
+      <button class="logout-btn" onclick="doLogout()">&#x2715;</button>
     </div>
   </div>
-
-  <!-- ── ASSIGN ── -->
-  <div class="panel" id="panel-assign">
-    <div class="card">
-      <div class="card-title">🔁 Assign Telecallers</div>
-      <div id="cleanAccountsList"><div class="section-loader">Loading clean accounts…</div></div>
-      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap" id="assignControls" style="display:none">
-        <div class="form-field" style="flex:1;min-width:160px">
-          <label>Select Telecaller</label>
-          <select id="tcSelect"><option value="">Loading…</option></select>
-        </div>
-        <button class="btn-sm btn-orange" style="margin-top:18px" onclick="assignTelecallers()">Assign Selected</button>
-        <button class="btn-sm btn-blue" style="margin-top:18px" onclick="autoAssign()">⚡ Auto-Assign Execs</button>
-      </div>
+  <div class="tab-nav" id="tabNav"></div>
+  <div class="tab-page" id="pageOverview">
+    <div class="section-title">Operations Overview</div>
+    <div class="section-sub">Month-to-date summary</div>
+    <div class="stat-grid">
+      <div class="stat-card purple"><div class="stat-icon">&#128230;</div><div class="stat-val" id="ovTotal">&#8212;</div><div class="stat-lbl">Total Base</div></div>
+      <div class="stat-card green"><div class="stat-icon">&#9989;</div><div class="stat-val" id="ovCollected">&#8212;</div><div class="stat-lbl">Collected</div></div>
+      <div class="stat-card amber"><div class="stat-icon">&#9203;</div><div class="stat-val" id="ovPending">&#8212;</div><div class="stat-lbl">Pending</div></div>
+      <div class="stat-card red"><div class="stat-icon">&#9888;&#65039;</div><div class="stat-val" id="ovIssues">&#8212;</div><div class="stat-lbl">Open Issues</div></div>
+      <div class="stat-card blue"><div class="stat-icon">&#128222;</div><div class="stat-val" id="ovCalls">&#8212;</div><div class="stat-lbl">Calls Made</div></div>
+      <div class="stat-card cyan"><div class="stat-icon">&#128197;</div><div class="stat-val" id="ovAppts">&#8212;</div><div class="stat-lbl">Appts Fixed</div></div>
     </div>
-    <div class="card">
-      <div class="card-title">❌ Rejected Records</div>
-      <div id="rejectedBody"><div class="section-loader">Loading…</div></div>
+    <div class="sub-label">Alerts</div>
+    <div id="alertsList"><div class="empty-state"><div class="empty-icon">&#9989;</div><div class="empty-text">No active alerts</div></div></div>
+  </div>
+  <div class="tab-page" id="pageStaff">
+    <div class="section-title">Staff Management</div>
+    <div class="section-sub">Create, view and manage all staff</div>
+    <div class="action-grid">
+      <div class="action-card" onclick="openSheet('createStaffSheet')"><div class="action-icon">&#10133;</div><div class="action-label">Add Staff</div><div class="action-sub">Create new account</div></div>
+      <div class="action-card" onclick="openSheet('resetPinSheet')"><div class="action-icon">&#128273;</div><div class="action-label">Reset PIN</div><div class="action-sub">Change staff PIN</div></div>
+      <div class="action-card" onclick="openSheet('toggleStaffSheet')"><div class="action-icon">&#128260;</div><div class="action-label">Toggle Active</div><div class="action-sub">Enable / disable</div></div>
+      <div class="action-card" onclick="loadStaffList()"><div class="action-icon">&#128101;</div><div class="action-label">View All Staff</div><div class="action-sub">Refresh list</div></div>
+    </div>
+    <div class="sub-label">All Staff</div>
+    <div class="search-wrap"><div class="search-box"><span style="color:var(--text3);font-size:15px;">&#128269;</span><input class="search-input" id="staffSearch" placeholder="Search ID / name / role..." oninput="renderStaffList()"></div></div>
+    <div id="staffList"><div class="empty-state"><div class="empty-icon">&#128101;</div><div class="empty-text">Loading staff...</div></div></div>
+  </div>
+  <div class="tab-page" id="pageAssign">
+    <div class="section-title">Assign &amp; Dispatch</div>
+    <div class="section-sub">Batch upload, TC assignment, exec area mapping</div>
+    <div class="action-grid">
+      <div class="action-card" onclick="openSheet('uploadBaseSheet')"><div class="action-icon">&#128228;</div><div class="action-label">Upload Base</div><div class="action-sub">New ACT data batch</div></div>
+      <div class="action-card" onclick="openSheet('assignTCSheet')"><div class="action-icon">&#127919;</div><div class="action-label">Assign Telecaller</div><div class="action-sub">Account to TC</div></div>
+      <div class="action-card" onclick="openSheet('autoAssignSheet')"><div class="action-icon">&#128506;&#65039;</div><div class="action-label">Auto Assign Execs</div><div class="action-sub">Area-wise mapping</div></div>
+      <div class="action-card" onclick="openSheet('batchSheet')"><div class="action-icon">&#128203;</div><div class="action-label">Batch Info</div><div class="action-sub">View current batches</div></div>
+    </div>
+    <div class="sub-label">Quick Reassign</div>
+    <div class="data-row" style="flex-direction:column;align-items:stretch;gap:10px;">
+      <div class="field-label">Account Number</div><input class="field-input" id="reassignAccNo" placeholder="e.g. ACT001234" style="margin-bottom:4px;">
+      <div class="field-label">Reassign To (Staff ID)</div><input class="field-input" id="reassignTo" placeholder="e.g. TC_002 or EX_003" style="margin-bottom:4px;">
+      <div class="field-label">Reason</div><input class="field-input" id="reassignReason" placeholder="Why reassigning?">
+      <button class="btn-primary" onclick="doReassign()" style="margin-top:4px;">Reassign Account</button>
     </div>
   </div>
-
-  <!-- ── STAFF ── -->
-  <div class="panel" id="panel-staff">
-    <div class="card">
-      <div class="card-title">👥 Staff List
-        <button class="btn-sm btn-orange" style="margin-left:auto" onclick="openAddStaff()">+ Add</button>
-      </div>
-      <div id="staffListBody"><div class="section-loader">Loading…</div></div>
-    </div>
+  <div class="tab-page" id="pagePending">
+    <div class="section-title">Pending Accounts</div>
+    <div class="section-sub">Accounts awaiting field collection</div>
+    <div class="search-wrap"><div class="search-box"><span style="color:var(--text3);font-size:15px;">&#128269;</span><input class="search-input" id="pendingSearch" placeholder="Search account / area..." oninput="renderPendingList()"></div></div>
+    <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px;" id="pendingCount"></div>
+    <div id="pendingList"><div class="empty-state"><div class="empty-icon">&#9203;</div><div class="empty-text">Loading...</div></div></div>
   </div>
-
-  <!-- ── STORE ── -->
-  <div class="panel" id="panel-store">
-    <div class="card">
-      <div class="card-title">🏪 Store Queue
-        <span id="leakageBadge" style="margin-left:auto"></span>
-      </div>
-      <div id="storeQueueBody"><div class="section-loader">Loading…</div></div>
-    </div>
+  <div class="tab-page" id="pageIssues">
+    <div class="section-title">Open Issues</div>
+    <div class="section-sub">Junction box &middot; Refund &middot; Reconnection &middot; Others</div>
+    <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px;" id="issuesCount"></div>
+    <div id="issuesList"><div class="empty-state"><div class="empty-icon">&#9888;&#65039;</div><div class="empty-text">Loading...</div></div></div>
   </div>
-
-  <!-- ── REPORTS ── -->
-  <div class="panel" id="panel-reports">
-    <div class="card">
-      <div class="stat-row" id="overviewStats">
-        <div class="stat"><div class="stat-val" id="s-collected">–</div><div class="stat-lbl">Collected MTD</div></div>
-        <div class="stat"><div class="stat-val" id="s-pending">–</div><div class="stat-lbl">Pending</div></div>
-        <div class="stat"><div class="stat-val" id="s-issues">–</div><div class="stat-lbl">Open Issues</div></div>
-      </div>
-      <div class="stat-row">
-        <div class="stat"><div class="stat-val" id="s-calls">–</div><div class="stat-lbl">Calls MTD</div></div>
-        <div class="stat"><div class="stat-val" id="s-appts">–</div><div class="stat-lbl">Appts MTD</div></div>
-        <div class="stat"><div class="stat-val" id="s-conv">–</div><div class="stat-lbl">Conv %</div></div>
-      </div>
+  <div class="tab-page" id="pageTeam">
+    <div class="section-title">Team Performance</div>
+    <div class="section-sub">Telecaller &amp; executive breakdown (MTD)</div>
+    <div class="sub-label">Telecallers</div>
+    <div id="tcPerfList"><div class="empty-state"><div class="empty-icon">&#128222;</div><div class="empty-text">Loading...</div></div></div>
+    <div class="divider"></div>
+    <div class="sub-label">Field Executives</div>
+    <div id="execPerfList"><div class="empty-state"><div class="empty-icon">&#128692;</div><div class="empty-text">Loading...</div></div></div>
+  </div>
+  <div class="tab-page" id="pageCooling">
+    <div class="section-title">&#129398; Cooling Pool</div>
+    <div class="section-sub">Accounts on temporary hold &mdash; auto-released by schedule</div>
+    <div class="cp-stat-strip">
+      <div class="cp-stat"><div class="cp-stat-val" id="cpTotal" style="color:var(--accent);">&#8212;</div><div class="cp-stat-lbl">In Pool</div></div>
+      <div class="cp-stat"><div class="cp-stat-val" id="cpOverdue" style="color:var(--red);">&#8212;</div><div class="cp-stat-lbl">Overdue</div></div>
+      <div class="cp-stat"><div class="cp-stat-val" id="cpReleased" style="color:var(--green);">&#8212;</div><div class="cp-stat-lbl">Released</div></div>
     </div>
-    <div class="card">
-      <div class="card-title">🏆 Executive Leaderboard</div>
-      <div id="leaderboardBody"><div class="section-loader">Loading…</div></div>
+    <div class="cp-filter-bar">
+      <div style="flex:1;min-width:130px;"><div class="field-label" style="margin-bottom:6px;">State</div><select class="field-select" id="cpStateFilter" onchange="loadCoolingPool()"><option value="Cooling">Active (Cooling)</option><option value="Released">Released</option><option value="ALL">All Records</option></select></div>
+      <div style="flex:1;min-width:130px;"><div class="field-label" style="margin-bottom:6px;">Reason</div><select class="field-select" id="cpReasonFilter" onchange="renderCoolingList()"><option value="">All</option><option value="Issue">Issues</option><option value="Line">Line Active</option><option value="Safe">Safe Custody</option><option value="Reactivation">Reactivation</option></select></div>
+      <div style="display:flex;align-items:flex-end;"><button style="padding:9px 14px;border-radius:10px;background:var(--bg3);color:var(--text2);border:1.5px solid var(--border);font-family:var(--font-head);font-size:12px;font-weight:700;cursor:pointer;" onclick="loadCoolingPool()">&#8635; Refresh</button></div>
     </div>
-    <div class="card">
-      <div class="card-title">📞 Telecaller Performance</div>
-      <div id="tcPerfBody"><div class="section-loader">Loading…</div></div>
-    </div>
+    <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px;" id="cpCount"></div>
+    <div id="coolingList"><div class="empty-state"><div class="empty-icon">&#129398;</div><div class="empty-text">Loading...</div></div></div>
   </div>
 </div>
-
-<!-- ── ADD STAFF MODAL ── -->
-<div class="modal-overlay" id="addStaffModal">
-  <div class="modal">
-    <div class="modal-title">Add New Staff
-      <button class="modal-close" onclick="closeModal('addStaffModal')">✕</button>
-    </div>
-    <div class="form-row">
-      <div class="form-field">
-        <label>Full Name</label>
-        <input id="ns-name" placeholder="e.g. Priya" />
-      </div>
-      <div class="form-field">
-        <label>Role</label>
-        <select id="ns-role">
-          <option value="TELECALLER">Telecaller</option>
-          <option value="EXECUTIVE">Field Executive</option>
-          <option value="SUPERVISOR">Supervisor</option>
-          <option value="ADMIN">Admin</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-field">
-        <label>PIN (4–8 digits)</label>
-        <input id="ns-pin" type="password" placeholder="4–8 digits" maxlength="8" />
-      </div>
-      <div class="form-field">
-        <label>Area (optional)</label>
-        <input id="ns-area" placeholder="e.g. RS Puram" />
-      </div>
-    </div>
-    <button class="btn-sm btn-orange" style="width:100%;padding:11px" onclick="submitAddStaff()">Create Staff</button>
+<div class="sheet-overlay" id="overlay" onclick="closeSheet()"></div>
+<div class="bottom-sheet" id="createStaffSheet">
+  <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
+  <div class="sheet-header"><div class="sheet-title">Add New Staff</div><div class="sheet-close" onclick="closeSheet()">&#x2715;</div></div>
+  <div class="sheet-body">
+    <div class="field-group"><label class="field-label">Role</label><select class="field-select" id="csRole"><option value="TELECALLER">Telecaller</option><option value="EXECUTIVE">Executive</option><option value="SUPERVISOR">Supervisor</option><option value="OPS_MANAGER">Ops Manager</option><option value="ADMIN">Admin</option></select></div>
+    <div class="field-group"><label class="field-label">Display Name</label><input class="field-input" id="csName" placeholder="e.g. Telecaller 8"></div>
+    <div class="field-group"><label class="field-label">City</label><select class="field-select" id="csCity"><option value="CBE">Coimbatore (CBE)</option><option value="CHN">Chennai (CHN)</option></select></div>
+    <div class="field-group"><label class="field-label">PIN (4 digits)</label><input class="field-input" id="csPin" type="password" inputmode="numeric" maxlength="4" placeholder="4-digit PIN"></div>
+    <div class="field-group"><label class="field-label">Area (exec only, optional)</label><input class="field-input" id="csArea" placeholder="e.g. RS Puram, Tatabad"></div>
+    <button class="btn-primary" onclick="doCreateStaff()">Create Staff Account</button>
   </div>
 </div>
-
-<!-- ── RESET PIN MODAL ── -->
-<div class="modal-overlay" id="resetPinModal">
-  <div class="modal">
-    <div class="modal-title">Reset PIN — <span id="resetTargetId"></span>
-      <button class="modal-close" onclick="closeModal('resetPinModal')">✕</button>
-    </div>
-    <div class="form-field">
-      <label>New PIN</label>
-      <input id="rp-pin" type="password" placeholder="New 4–8 digit PIN" maxlength="8" />
-    </div>
-    <button class="btn-sm btn-orange" style="width:100%;padding:11px;margin-top:12px" onclick="submitResetPin()">Update PIN</button>
+<div class="bottom-sheet" id="resetPinSheet">
+  <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
+  <div class="sheet-header"><div class="sheet-title">Reset Staff PIN</div><div class="sheet-close" onclick="closeSheet()">&#x2715;</div></div>
+  <div class="sheet-body">
+    <div class="field-group"><label class="field-label">Staff ID</label><input class="field-input" id="rpStaffId" placeholder="e.g. TC_003"></div>
+    <div class="field-group"><label class="field-label">New PIN (4 digits)</label><input class="field-input" id="rpPin" type="password" inputmode="numeric" maxlength="4" placeholder="New 4-digit PIN"></div>
+    <button class="btn-primary" onclick="doResetPin()">Reset PIN</button>
   </div>
 </div>
-
-<div id="toast"></div>
-
+<div class="bottom-sheet" id="toggleStaffSheet">
+  <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
+  <div class="sheet-header"><div class="sheet-title">Toggle Staff Status</div><div class="sheet-close" onclick="closeSheet()">&#x2715;</div></div>
+  <div class="sheet-body">
+    <div class="field-group"><label class="field-label">Staff ID</label><input class="field-input" id="tsStaffId" placeholder="e.g. EX_002"></div>
+    <div class="field-group"><label class="field-label">Set Status</label><select class="field-select" id="tsStatus"><option value="true">Active</option><option value="false">Inactive (Disabled)</option></select></div>
+    <button class="btn-primary" onclick="doToggleStaff()">Update Status</button>
+  </div>
+</div>
+<div class="bottom-sheet" id="uploadBaseSheet">
+  <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
+  <div class="sheet-header"><div class="sheet-title">Upload New Base</div><div class="sheet-close" onclick="closeSheet()">&#x2715;</div></div>
+  <div class="sheet-body">
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">Paste the ACT data range name or Sheet tab name below. The pipeline will filter duplicates and historic accounts automatically.</p>
+    <div class="field-group"><label class="field-label">Batch Label</label><input class="field-input" id="ubBatch" placeholder="e.g. VOA_APR_2026_1"></div>
+    <div class="field-group"><label class="field-label">Source Sheet Tab Name</label><input class="field-input" id="ubSource" placeholder="e.g. ACT_Raw_Base"></div>
+    <div class="field-group"><label class="field-label">City</label><select class="field-select" id="ubCity"><option value="CBE">Coimbatore (CBE)</option><option value="CHN">Chennai (CHN)</option></select></div>
+    <button class="btn-primary" onclick="doUploadBase()">&#9654; Run Pipeline</button>
+    <p style="font-size:11px;color:var(--text3);margin-top:12px;text-align:center;">Duplicates + historic accounts will be filtered automatically</p>
+  </div>
+</div>
+<div class="bottom-sheet" id="assignTCSheet">
+  <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
+  <div class="sheet-header"><div class="sheet-title">Assign Telecaller</div><div class="sheet-close" onclick="closeSheet()">&#x2715;</div></div>
+  <div class="sheet-body">
+    <div class="field-group"><label class="field-label">Batch No</label><input class="field-input" id="atBatch" placeholder="e.g. VOA_MAR_2026_1"></div>
+    <div class="field-group"><label class="field-label">Telecaller Staff ID</label><input class="field-input" id="atTCId" placeholder="e.g. TC_001"></div>
+    <div class="field-group"><label class="field-label">City</label><select class="field-select" id="atCity"><option value="CBE">Coimbatore (CBE)</option><option value="CHN">Chennai (CHN)</option></select></div>
+    <button class="btn-primary" onclick="doAssignTC()">Assign Telecaller to Batch</button>
+  </div>
+</div>
+<div class="bottom-sheet" id="autoAssignSheet">
+  <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
+  <div class="sheet-header"><div class="sheet-title">Auto Assign Executives</div><div class="sheet-close" onclick="closeSheet()">&#x2715;</div></div>
+  <div class="sheet-body">
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">Automatically assigns executives to pending accounts based on area mapping configured in the sheet.</p>
+    <div class="field-group"><label class="field-label">City</label><select class="field-select" id="aaCity"><option value="CBE">Coimbatore (CBE)</option><option value="CHN">Chennai (CHN)</option></select></div>
+    <button class="btn-primary" onclick="doAutoAssign()">&#9654; Run Auto Assign</button>
+    <button class="btn-secondary" onclick="openSheet('areaMapSheet')">&#9881;&#65039; Configure Area Mapping</button>
+  </div>
+</div>
+<div class="bottom-sheet" id="areaMapSheet" style="z-index:202;">
+  <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
+  <div class="sheet-header"><div class="sheet-title">Area &rarr; Exec Mapping</div><div class="sheet-close" onclick="document.getElementById('areaMapSheet').classList.remove('open')">&#x2715;</div></div>
+  <div class="sheet-body">
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">Each area should be mapped to one executive Staff ID. This controls auto-assignment.</p>
+    <div id="areaMapList"><div class="empty-state"><div class="empty-icon">&#128506;&#65039;</div><div class="empty-text">Loading area map...</div></div></div>
+    <div class="divider"></div>
+    <div class="sub-label">Add / Update Mapping</div>
+    <div class="field-group"><label class="field-label">Area Name</label><input class="field-input" id="amArea" placeholder="e.g. RS Puram"></div>
+    <div class="field-group"><label class="field-label">Executive Staff ID</label><input class="field-input" id="amExecId" placeholder="e.g. EX_001"></div>
+    <button class="btn-primary" onclick="doSaveAreaMap()">Save Mapping</button>
+  </div>
+</div>
+<div class="bottom-sheet" id="batchSheet">
+  <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
+  <div class="sheet-header"><div class="sheet-title">Batch Information</div><div class="sheet-close" onclick="closeSheet()">&#x2715;</div></div>
+  <div class="sheet-body"><div id="batchInfoBody"><div class="empty-state"><div class="empty-icon">&#128203;</div><div class="empty-text">Loading...</div></div></div></div>
+</div>
 <script>
-// ════════════════════════════════════════════════════════════
-// CollectPro Admin Panel — v1.3.0
-// Vibrant Owl Agencies | LIVARA CBE
-// ════════════════════════════════════════════════════════════
-const API_URL   = 'https://script.google.com/macros/s/AKfycbwsGJ0HI7smnWk-3Cpcno6BJbRwbWHe3ZaAhPavTmHE4IrIG9Kk0t_7mQqh9x_fTHnI/exec';
-const CLIENT_ID = 'LIVARA_CBE';
-let session     = null;
-let allClean    = [];
-let selectedAccounts = new Set();
-let _resetTargetId  = null;
-
-// ── API ────────────────────────────────────────────────────
-async function api(p) {
-  p.client_id = p.client_id || CLIENT_ID;
-  if (session) p.token = session.token;
-  try {
-    const r = await fetch(API_URL + '?' + new URLSearchParams(p));
-    return await r.json();
-  } catch(e) { return { success: false, error: e.message }; }
-}
-
-async function apiPost(action, body) {
-  body.client_id = CLIENT_ID;
-  body.action    = action;
-  if (session) body.token = session.token;
-  try {
-    const r = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(body)
-    });
-    return await r.json();
-  } catch(e) {
-    try {
-      const r2 = await fetch(API_URL + '?' + new URLSearchParams(body));
-      return await r2.json();
-    } catch(e2) { return { success: false, error: 'Network error' }; }
-  }
-}
-
-// ── TOKEN REFRESH ─────────────────────────────────────────
-function startTokenRefresh() {
-  setInterval(async function() {
-    if (!session) return;
-    try {
-      const res = await api({ action: 'refresh_token', token: session.token });
-      if (res.success && res.data && res.data.token) {
-        session.token = res.data.token;
-      } else { doLogout(); }
-    } catch(e) {}
-  }, 25 * 60 * 1000);
-}
-
-// ── AUTH ───────────────────────────────────────────────────
-async function doLogin() {
-  const staffId = document.getElementById('loginStaffId').value.trim();
-  const pin     = document.getElementById('loginPin').value.trim();
-  const errEl   = document.getElementById('loginError');
-  errEl.style.display = 'none';
-  if (!staffId || !pin) { showErr('Enter Staff ID and PIN'); return; }
-
-  const res = await api({ action: 'login', city: 'CBE', staffId, pin });
-  if (!res.success) { showErr(res.error || 'Login failed'); return; }
-
-  const role = res.data.role;
-  if (role !== 'ADMIN' && role !== 'OWNER') {
-    showErr('Access denied. Admin or Owner role required.'); return;
-  }
-
-  session = res.data;
-  document.getElementById('topbarSub').textContent =
-    (res.data.staffName || staffId) + ' · ' + (res.data.roleLabel || role);
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('appScreen').style.display   = 'flex';
-  startTokenRefresh();
-  loadAllPanels();
-}
-
-function doLogout() {
-  session = null;
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('appScreen').style.display   = 'none';
-  document.getElementById('loginPin').value = '';
-}
-
-function showErr(msg) {
-  const el = document.getElementById('loginError');
-  el.textContent = msg;
-  el.style.display = 'block';
-}
-
-// ── TABS ───────────────────────────────────────────────────
-function switchTab(name) {
-  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', b.getAttribute('onclick').includes("'"+name+"'")));
-  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + name));
-}
-
-function loadAllPanels() {
-  loadBasePanel();
-  loadAssignPanel();
-  loadStaffPanel();
-  loadStorePanel();
-  loadReportsPanel();
-}
-
-// ── TOAST ──────────────────────────────────────────────────
-let _toastTimer;
-function toast(msg, type) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'show' + (type ? ' ' + type : '');
-  clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => el.className = '', 2800);
-}
-
-// ── MODAL ─────────────────────────────────────────────────
-function openModal(id)  { document.getElementById(id).classList.add('show'); }
-function closeModal(id) { document.getElementById(id).classList.remove('show'); }
-
-// ════════════════════════════════════════════════════════════
-// BASE UPLOAD PANEL
-// ════════════════════════════════════════════════════════════
-let _parsedRows = [];
-
-function handleDrop(e) {
-  e.preventDefault();
-  document.getElementById('uploadZone').classList.remove('drag');
-  const file = e.dataTransfer.files[0];
-  if (file) processFile(file);
-}
-
-function handleFileSelect(e) {
-  const file = e.target.files[0];
-  if (file) processFile(file);
-}
-
-function processFile(file) {
-  const label = document.getElementById('uploadLabel');
-  label.textContent = '⏳ Parsing ' + file.name + '…';
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      _parsedRows = parseCSVorXLSX(file.name, e.target.result);
-      document.getElementById('previewSummary').innerHTML =
-        '📄 <strong>' + file.name + '</strong> — <strong>' + _parsedRows.length + ' rows</strong> detected';
-      document.getElementById('filePreview').style.display = 'block';
-      label.innerHTML = '✅ ' + file.name + '<br><small>' + _parsedRows.length + ' rows ready</small>';
-    } catch(err) {
-      toast('Parse error: ' + err.message, 'error');
-      label.innerHTML = 'Tap to select Excel or CSV file<br><small>Accepts .xlsx, .csv</small>';
-    }
-  };
-  if (file.name.endsWith('.csv')) reader.readAsText(file);
-  else reader.readAsBinaryString(file);
-}
-
-function parseCSVorXLSX(name, data) {
-  if (name.endsWith('.csv')) {
-    const lines = data.split('\n').filter(l => l.trim());
-    const hdrs  = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/[^a-z0-9]/g,''));
-    return lines.slice(1).map(line => {
-      const cols = line.split(',');
-      const obj  = {};
-      hdrs.forEach((h, i) => obj[h] = (cols[i] || '').trim().replace(/^"|"$/g,''));
-      return { accountNo: obj['accountno']||obj['accountnumber']||'', name: obj['name']||obj['customername']||'',
-               mobile: obj['mobileno']||obj['mobile']||'', address: obj['address1']||obj['address']||'',
-               area: obj['area']||'', fxCode: obj['fxcode']||obj['fxname']||'', srNumber: obj['srnumber']||obj['srno']||'' };
-    }).filter(r => r.accountNo);
-  }
-  // XLSX via SheetJS (loaded below if needed)
-  if (typeof XLSX === 'undefined') throw new Error('XLSX library loading, retry in 2 seconds');
-  const wb   = XLSX.read(data, { type: 'binary' });
-  const ws   = wb.Sheets[wb.SheetNames[0]];
-  const json = XLSX.utils.sheet_to_json(ws, { defval: '' });
-  return json.map(r => {
-    const k = (s) => Object.keys(r).find(k => k.toLowerCase().replace(/[^a-z0-9]/g,'') === s.replace(/[^a-z0-9]/g,'')) || '';
-    return { accountNo: String(r[k('accountno')]||'').trim(), name: String(r[k('name')]||r[k('customername')]||'').trim(),
-             mobile: String(r[k('mobileno')]||r[k('mobile')]||'').trim(), address: String(r[k('address1')]||r[k('address')]||'').trim(),
-             area: String(r[k('area')]||'').trim(), fxCode: String(r[k('fxcode')]||r[k('fxname')]||'').trim().toUpperCase(),
-             srNumber: String(r[k('srnumber')]||r[k('srno')]||'').trim() };
-  }).filter(r => r.accountNo);
-}
-
-async function submitBase() {
-  if (!_parsedRows.length) { toast('No rows to upload', 'error'); return; }
-  const btn = document.getElementById('uploadBtn');
-  btn.disabled = true; btn.innerHTML = '<span class="loader"></span>Uploading…';
-  const res = await apiPost('upload_base', {
-    city: 'CBE', rows: _parsedRows, batchSeq: Date.now() % 10000, pushedBy: session.staffId
-  });
-  btn.disabled = false; btn.textContent = '⬆ Push to System';
-  if (res.success) {
-    const d = res.data;
-    document.getElementById('uploadResult').style.display = 'block';
-    document.getElementById('uploadResultBody').innerHTML = `
-      <div class="stat-row">
-        <div class="stat"><div class="stat-val" style="color:var(--green)">${d.workable}</div><div class="stat-lbl">Workable</div></div>
-        <div class="stat"><div class="stat-val" style="color:var(--red)">${d.rejected}</div><div class="stat-lbl">Rejected</div></div>
-        <div class="stat"><div class="stat-val">${d.quality.score}%</div><div class="stat-lbl">${d.quality.label}</div></div>
-      </div>
-      <div style="font-size:12px;color:var(--text2);margin-top:8px">
-        Batch: <strong>${d.batchNo}</strong> &nbsp;|&nbsp;
-        Duplicates: ${d.breakdown.dupInBatch} &nbsp;|&nbsp;
-        Historic: ${d.breakdown.historicMatch} &nbsp;|&nbsp;
-        Bad format: ${d.breakdown.badFormat}
-      </div>`;
-    toast('✅ Batch uploaded — ' + d.workable + ' workable', 'ok');
-    _parsedRows = [];
-    document.getElementById('filePreview').style.display = 'none';
-    loadAssignPanel();
-    loadBatchLog();
-  } else { toast(res.error || 'Upload failed', 'error'); }
-}
-
-async function loadBasePanel() {
-  loadBatchLog();
-}
-
-async function loadBatchLog() {
-  // Show last 10 batches from reports
-  const res = await api({ action: 'get_reports', reportType: 'daily', city: 'CBE' });
-  const el  = document.getElementById('batchLogBody');
-  el.innerHTML = '<div class="empty">No batch data yet</div>';
-}
-
-// ════════════════════════════════════════════════════════════
-// ASSIGN PANEL
-// ════════════════════════════════════════════════════════════
-async function loadAssignPanel() {
-  const [cleanRes, staffRes] = await Promise.all([
-    api({ action: 'get_clean_accounts', city: 'CBE' }),
-    api({ action: 'get_staff', city: 'CBE' })
-  ]);
-
-  // Populate TC dropdown
-  if (staffRes.success) {
-    const tcs  = staffRes.data.filter(s => s.role === 'TELECALLER' && s.active);
-    const sel  = document.getElementById('tcSelect');
-    sel.innerHTML = '<option value="">— Select Telecaller —</option>' +
-      tcs.map(t => `<option value="${t.staffId}">${t.staffId} · ${t.staffName}</option>`).join('');
-  }
-
-  const el = document.getElementById('cleanAccountsList');
-  if (!cleanRes.success) { el.innerHTML = `<div class="empty">Error: ${cleanRes.error}</div>`; return; }
-
-  allClean = cleanRes.data || [];
-  const unassigned = allClean.filter(a => !a.telecallerStaffId);
-  if (!unassigned.length) {
-    el.innerHTML = '<div class="empty">✅ All accounts assigned</div>';
-    document.getElementById('assignControls').style.display = 'none';
-    return;
-  }
-
-  document.getElementById('assignControls').style.display = 'flex';
-  selectedAccounts.clear();
-  el.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="font-size:12px;color:var(--text2)">${unassigned.length} unassigned accounts</span>
-      <label style="font-size:12px;cursor:pointer"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"> Select All</label>
-    </div>
-    <div class="tbl-wrap">
-    <table><thead><tr><th></th><th>Account No</th><th>Name</th><th>Area</th><th>FX Code</th><th>Owner</th><th>Ageing</th></tr></thead>
-    <tbody>` +
-    unassigned.map(a => `
-      <tr>
-        <td><input type="checkbox" class="acc-chk" value="${a.accountNo}" onchange="toggleAccount(this)"></td>
-        <td style="font-family:monospace;font-size:11px">${a.accountNo}</td>
-        <td>${a.name || '–'}</td>
-        <td>${a.area || '–'}</td>
-        <td><span class="badge badge-blue">${a.fxCode || '–'}</span></td>
-        <td style="font-size:11px;font-family:monospace">${a.currentOwner||a.CURRENT_OWNER||'NA'}</td>
-        <td style="font-size:11px;font-weight:600;color:${getAgeColor(a.ageing_hours)}">${(a.ageing_hours||0)}h <span style="font-size:10px">${getAgeBucket(a.ageing_hours)}</span></td>
-      </tr>`).join('') +
-    '</tbody></table></div>';
-
-  // Rejected records
-  const rejRes = await api({ action: 'get_rejected_records', city: 'CBE' });
-  const rejEl  = document.getElementById('rejectedBody');
-  if (!rejRes.success || !rejRes.data.length) {
-    rejEl.innerHTML = '<div class="empty">No rejected records</div>'; return;
-  }
-  rejEl.innerHTML = `<div class="tbl-wrap"><table>
-    <thead><tr><th>Account No</th><th>Reason</th><th>Batch</th></tr></thead>
-    <tbody>${rejRes.data.map(r =>
-      `<tr><td style="font-size:11px;font-family:monospace">${r.accountNo}</td>
-           <td><span class="badge badge-red">${r.reason}</span></td>
-           <td style="font-size:11px;color:var(--text2)">${r.batchNo||'–'}</td></tr>`
-    ).join('')}</tbody></table></div>`;
-}
-
-function toggleSelectAll(cb) {
-  document.querySelectorAll('.acc-chk').forEach(c => {
-    c.checked = cb.checked;
-    cb.checked ? selectedAccounts.add(c.value) : selectedAccounts.delete(c.value);
-  });
-}
-function toggleAccount(cb) {
-  cb.checked ? selectedAccounts.add(cb.value) : selectedAccounts.delete(cb.value);
-}
-
-async function assignTelecallers() {
-  const tcId = document.getElementById('tcSelect').value;
-  if (!tcId) { toast('Select a telecaller first', 'error'); return; }
-  if (!selectedAccounts.size) { toast('Select accounts to assign', 'error'); return; }
-  const res = await apiPost('assign_telecaller', {
-    city: 'CBE', telecallerStaffId: tcId, accountNos: [...selectedAccounts]
-  });
-  if (res.success) { toast('✅ Assigned ' + res.data.assigned + ' accounts to ' + tcId, 'ok'); loadAssignPanel(); }
-  else toast(res.error || 'Assignment failed', 'error');
-}
-
-async function autoAssign() {
-  const res = await apiPost('auto_assign_execs', { city: 'CBE' });
-  if (res.success) toast('✅ Auto-assigned ' + res.data.assigned + ' executives', 'ok');
-  else toast(res.error || 'Auto-assign failed', 'error');
-}
-
-// ════════════════════════════════════════════════════════════
-// STAFF PANEL
-// ════════════════════════════════════════════════════════════
-async function loadStaffPanel() {
-  const res = await api({ action: 'get_staff', city: 'CBE' });
-  const el  = document.getElementById('staffListBody');
-  if (!res.success) { el.innerHTML = `<div class="empty">Error: ${res.error}</div>`; return; }
-
-  const ROLE_COLOR = { OWNER:'orange', ADMIN:'orange', SUPERVISOR:'blue', TELECALLER:'green', EXECUTIVE:'amber', OPS_MANAGER:'blue' };
-  el.innerHTML = `<div class="tbl-wrap"><table>
-    <thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
-    <tbody>` +
-    res.data.map(s => `
-      <tr>
-        <td style="font-family:monospace;font-size:11px">${s.staffId}</td>
-        <td>${s.staffName}</td>
-        <td><span class="badge badge-${ROLE_COLOR[s.role]||'blue'}">${s.roleLabel}</span></td>
-        <td>${s.active ? '<span class="badge badge-green">Active</span>' : '<span class="badge badge-red">Inactive</span>'}</td>
-        <td style="display:flex;gap:6px">
-          <button class="btn-sm btn-blue" onclick="openResetPin('${s.staffId}')">📌 PIN</button>
-          <button class="btn-sm ${s.active?'btn-red':'btn-green'}" onclick="toggleStaff('${s.staffId}',${!s.active})">
-            ${s.active ? 'Deactivate' : 'Activate'}
-          </button>
-        </td>
-      </tr>`).join('') +
-    '</tbody></table></div>';
-}
-
-function openAddStaff() { openModal('addStaffModal'); }
-
-async function submitAddStaff() {
-  const name = document.getElementById('ns-name').value.trim();
-  const role = document.getElementById('ns-role').value;
-  const pin  = document.getElementById('ns-pin').value.trim();
-  const area = document.getElementById('ns-area').value.trim();
-  if (!name || !pin) { toast('Name and PIN required', 'error'); return; }
-  const res = await apiPost('create_staff', { city: 'CBE', staffName: name, role, pin, area });
-  if (res.success) {
-    toast('✅ ' + res.data.staffId + ' created', 'ok');
-    closeModal('addStaffModal');
-    loadStaffPanel();
-  } else toast(res.error || 'Failed to create staff', 'error');
-}
-
-function openResetPin(staffId) {
-  _resetTargetId = staffId;
-  document.getElementById('resetTargetId').textContent = staffId;
-  document.getElementById('rp-pin').value = '';
-  openModal('resetPinModal');
-}
-
-async function submitResetPin() {
-  const pin = document.getElementById('rp-pin').value.trim();
-  if (!pin || pin.length < 4) { toast('PIN must be at least 4 digits', 'error'); return; }
-  const res = await apiPost('reset_pin', { city: 'CBE', targetStaffId: _resetTargetId, newPin: pin });
-  if (res.success) { toast('✅ PIN updated for ' + _resetTargetId, 'ok'); closeModal('resetPinModal'); }
-  else toast(res.error || 'Failed to reset PIN', 'error');
-}
-
-async function toggleStaff(staffId, active) {
-  const res = await apiPost('toggle_staff_active', { city: 'CBE', targetStaffId: staffId, active });
-  if (res.success) { toast((active ? '✅ Activated: ' : '🔴 Deactivated: ') + staffId, active?'ok':''); loadStaffPanel(); }
-  else toast(res.error || 'Failed', 'error');
-}
-
-// ════════════════════════════════════════════════════════════
-// STORE PANEL
-// ════════════════════════════════════════════════════════════
-async function loadStorePanel() {
-  const res = await api({ action: 'get_store_queue', city: 'CBE' });
-  const el  = document.getElementById('storeQueueBody');
-  if (!res.success) { el.innerHTML = `<div class="empty">Error: ${res.error}</div>`; return; }
-
-  const items   = res.data || [];
-  const leakage = items.filter(i => i.leakageFlag).length;
-  const badge   = document.getElementById('leakageBadge');
-  badge.innerHTML = leakage > 0 ? `<span class="badge badge-red">⚠ ${leakage} Leakage</span>` : '';
-
-  if (!items.length) { el.innerHTML = '<div class="empty">No pending store submissions</div>'; return; }
-
-  el.innerHTML = `<div class="tbl-wrap"><table>
-    <thead><tr><th>Account</th><th>Name</th><th>Exec</th><th>Date</th><th>Flag</th><th>Action</th></tr></thead>
-    <tbody>` +
-    items.map(i => `
-      <tr>
-        <td style="font-size:11px;font-family:monospace">${i.accountNo}</td>
-        <td>${i.name||'–'}</td>
-        <td style="font-size:11px">${i.executiveStaffId}</td>
-        <td style="font-size:11px">${i.collectedDate||'–'}</td>
-        <td>${i.leakageFlag ? '<span class="badge badge-red">Leakage</span>' : ''}</td>
-        <td style="display:flex;gap:4px">
-          <button class="btn-sm btn-green" onclick="processStore('${i.accountNo}','Accepted')">✓ Accept</button>
-          <button class="btn-sm btn-red" onclick="processStore('${i.accountNo}','Rejected')">✕ Reject</button>
-        </td>
-      </tr>`).join('') +
-    '</tbody></table></div>';
-}
-
-async function processStore(accountNo, decision) {
-  const res = await apiPost('process_store_submission', { city: 'CBE', accountNo, decision });
-  if (res.success) { toast((decision === 'Accepted' ? '✅ Accepted: ' : '❌ Rejected: ') + accountNo, decision==='Accepted'?'ok':''); loadStorePanel(); }
-  else toast(res.error || 'Failed', 'error');
-}
-
-// ════════════════════════════════════════════════════════════
-// REPORTS PANEL
-// ════════════════════════════════════════════════════════════
-async function loadReportsPanel() {
-  const [overviewRes, lbRes] = await Promise.all([
-    api({ action: 'get_overview', city: 'CBE' }),
-    api({ action: 'get_leaderboard', city: 'CBE' })
-  ]);
-
-  if (overviewRes.success) {
-    const d = overviewRes.data;
-    document.getElementById('s-collected').textContent = d.collected ?? '–';
-    document.getElementById('s-pending').textContent   = d.pending   ?? '–';
-    document.getElementById('s-issues').textContent    = d.issues    ?? '–';
-    document.getElementById('s-calls').textContent     = d.calls     ?? '–';
-    document.getElementById('s-appts').textContent     = d.appts     ?? '–';
-    document.getElementById('s-conv').textContent      = (d.convRate ?? '–') + (d.convRate != null ? '%' : '');
-  }
-
-  const lbEl = document.getElementById('leaderboardBody');
-  const tcEl = document.getElementById('tcPerfBody');
-
-  if (lbRes.success && lbRes.data) {
-    const execs = lbRes.data.executives || [];
-    const tcs   = lbRes.data.telecallers || [];
-
-    lbEl.innerHTML = execs.length ? `<div class="tbl-wrap"><table>
-      <thead><tr><th>#</th><th>Exec ID</th><th>Name</th><th>Collected</th></tr></thead>
-      <tbody>` + execs.map((e,i) =>
-        `<tr><td>${i+1}</td><td style="font-size:11px;font-family:monospace">${e.staffId}</td>
-         <td>${e.staffName||'–'}</td><td><span class="badge badge-green">${e.collected}</span></td></tr>`
-      ).join('') + '</tbody></table></div>'
-      : '<div class="empty">No collection data yet</div>';
-
-    tcEl.innerHTML = tcs.length ? `<div class="tbl-wrap"><table>
-      <thead><tr><th>TC ID</th><th>Name</th><th>Calls</th><th>Appts</th><th>Closures</th></tr></thead>
-      <tbody>` + tcs.map(t =>
-        `<tr><td style="font-size:11px;font-family:monospace">${t.staffId}</td>
-         <td>${t.staffName||'–'}</td><td>${t.calls||0}</td>
-         <td>${t.appts||0}</td><td><span class="badge badge-orange">${t.closures||0}</span></td></tr>`
-      ).join('') + '</tbody></table></div>'
-      : '<div class="empty">No call data yet</div>';
-  } else {
-    lbEl.innerHTML = '<div class="empty">Could not load leaderboard</div>';
-    tcEl.innerHTML = '<div class="empty">Could not load performance data</div>';
-  }
-}
-
-// ── Load SheetJS for XLSX if not cached ───────────────────
-(function() {
-  const s = document.createElement('script');
-  s.src   = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-  document.head.appendChild(s);
-})();
-// ── v1.3.1 ACCOUNTABILITY HELPERS ───────────────────────────
-function getAgeColor(hours){var h=parseFloat(hours)||0;if(h>48)return'#dc2626';if(h>24)return'#ea580c';if(h>12)return'#d97706';return'#16a34a';}
-function getAgeBucket(hours){var h=parseFloat(hours)||0;if(h>48)return'🔴 Critical';if(h>24)return'🟠 Delayed';if(h>12)return'🟡 Attention';return'🟢 Fresh';}
-// ── end v1.3.1 ──────────────────────────────────────────────
-
+const API_URL='https://script.google.com/macros/s/AKfycbwsGJ0HI7smnWk-3Cpcno6BJbRwbWHe3ZaAhPavTmHE4IrIG9Kk0t_7mQqh9x_fTHnI/exec',CLIENT_ID='LIVARA_CBE';
+const ADMIN_ROLES=['ADMIN','OPS_MANAGER','SUPERVISOR'];
+let session=null,allStaff=[],allPending=[],allIssues=[],_coolingData=[];
+async function api(p){p.client_id=p.client_id||CLIENT_ID;if(session)p.token=session.token;try{const r=await fetch(API_URL+'?'+new URLSearchParams(p));return await r.json();}catch(e){return{success:false,error:e.message};}}
+async function apiPost(action,body){body.client_id=CLIENT_ID;body.action=action;if(session)body.token=session.token;try{const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});return await r.json();}catch(e){try{const r2=await fetch(API_URL+'?'+new URLSearchParams(body));return await r2.json();}catch(e2){return{success:false,error:'Network error'};}}}
+async function doLogin(){const city=document.getElementById('loginCity').value,staffId=document.getElementById('loginStaffId').value.trim().toUpperCase(),pin=document.getElementById('loginPin').value.trim();document.getElementById('loginError').style.display='none';if(!staffId||!pin){showErr('Enter Staff ID and PIN');return;}showLoader('Authenticating...');const res=await api({action:'login',city,staffId,pin});hideLoader();if(!res.success){showErr(res.error||'Login failed');return;}if(!ADMIN_ROLES.includes(res.data.role)){showErr('Access denied — Admin/Supervisor only');return;}session=res.data;startApp();}
+function showErr(m){const e=document.getElementById('loginError');e.textContent=m;e.style.display='block';}
+function startApp(){document.getElementById('loginScreen').style.display='none';document.getElementById('app').style.display='block';document.getElementById('headerBadge').textContent=session.staffId+' · '+session.city;document.getElementById('headerRole').textContent=session.role;buildTabs();loadOverview();loadPending();loadIssues();loadCoolingPool();}
+function buildTabs(){const role=session.role;const tabs=[{id:'overview',label:'Overview',page:'pageOverview'}];if(role==='ADMIN'){tabs.push({id:'staff',label:'Staff',page:'pageStaff'});tabs.push({id:'assign',label:'Assign',page:'pageAssign'});}if(role==='SUPERVISOR'){tabs.push({id:'assign',label:'Reassign',page:'pageAssign'});tabs.push({id:'team',label:'Team',page:'pageTeam'});}tabs.push({id:'pending',label:'Pending',page:'pagePending'});tabs.push({id:'issues',label:'Issues',page:'pageIssues'});tabs.push({id:'cooling',label:'Cooling Pool',page:'pageCooling'});document.getElementById('tabNav').innerHTML=tabs.map((t,i)=>'<button class="tab-btn '+(i===0?'active':'')+'" id="tabBtn_'+t.id+'" data-tid="'+t.id+'" data-page="'+t.page+'">'+t.label+'</button>').join('');document.getElementById('tabNav').querySelectorAll('[data-tid]').forEach(function(b){b.addEventListener('click',function(){switchTab(this.dataset.tid,this.dataset.page);});});document.getElementById('pageOverview').classList.add('active');if(role==='ADMIN')loadStaffList();if(role==='SUPERVISOR')loadTeamPerf();}
+function switchTab(id,pageId){document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.tab-page').forEach(p=>p.classList.remove('active'));document.getElementById('tabBtn_'+id).classList.add('active');document.getElementById(pageId).classList.add('active');}
+async function loadOverview(){const res=await api({action:'get_overview',city:session.city});if(res.success){const d=res.data;document.getElementById('ovTotal').textContent=(d.pending||0)+(d.collected||0);document.getElementById('ovCollected').textContent=d.collected||0;document.getElementById('ovPending').textContent=d.pending||0;document.getElementById('ovIssues').textContent=d.issues||0;document.getElementById('ovCalls').textContent=d.calls||0;document.getElementById('ovAppts').textContent=d.appts||0;renderAlerts(d.alerts||[]);}}
+function renderAlerts(alerts){const el=document.getElementById('alertsList');if(!alerts.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">&#9989;</div><div class="empty-text">No active alerts</div></div>';return;}const colors={red:['var(--red-lt)','var(--red)','#fecaca'],amber:['var(--amber-lt)','var(--amber)','#fde68a'],blue:['var(--blue-lt)','var(--blue)','#93c5fd']};el.innerHTML=alerts.map(a=>{var c=colors[a.type]||colors.blue;return'<div style="background:'+c[0]+';border:1px solid '+c[2]+';border-radius:12px;padding:14px 16px;margin-bottom:8px;"><div style="font-size:14px;font-weight:700;color:'+c[1]+';font-family:var(--font-head);margin-bottom:2px;">'+a.title+'</div><div style="font-size:12px;color:var(--text2);">'+a.sub+'</div></div>';}).join('');}
+async function loadStaffList(){showLoader('Loading staff...');const res=await api({action:'get_staff',city:session.city});hideLoader();allStaff=res.success?(res.data||[]):demoStaff();renderStaffList();}
+function renderStaffList(){var q=(document.getElementById('staffSearch').value||'').toLowerCase();var list=allStaff.filter(s=>!q||(s.staffId+' '+s.staffName+' '+s.role).toLowerCase().includes(q));var el=document.getElementById('staffList');if(!list.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">&#128101;</div><div class="empty-text">No staff found</div></div>';return;}el.innerHTML=list.map(s=>'<div class="data-row"><div style="flex:1;"><div class="data-row-title">'+(s.staffName||s.staffId)+' <span style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">'+s.staffId+'</span></div><div class="data-row-sub">'+(s.city||'')+(s.area?' &middot; '+s.area:'')+'</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><span class="data-row-badge '+roleBadge(s.role)+'">'+s.role+'</span><span class="data-row-badge '+(s.active?'badge-active':'badge-inactive')+'">'+(s.active?'ACTIVE':'INACTIVE')+'</span></div></div>').join('');}
+function roleBadge(r){return({TELECALLER:'badge-tc',EXECUTIVE:'badge-exec',SUPERVISOR:'badge-sv',ADMIN:'badge-admin',OPS_MANAGER:'badge-om'})[r]||'badge-admin';}
+async function loadPending(){const res=await api({action:'get_pending',city:session.city});allPending=res.success?(res.data||[]):demoPending();renderPendingList();}
+function renderPendingList(){var q=(document.getElementById('pendingSearch')?document.getElementById('pendingSearch').value:'').toLowerCase();var list=allPending.filter(p=>!q||(p.accountNo+' '+p.name+' '+p.area).toLowerCase().includes(q));document.getElementById('pendingCount').textContent=list.length+' pending account'+(list.length!==1?'s':'');var el=document.getElementById('pendingList');if(!list.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">&#9203;</div><div class="empty-text">No pending accounts</div></div>';return;}el.innerHTML=list.map(p=>{var days=p.agingDays||0;var ag=days>=7?'aging-crit':days>=3?'aging-warn':'aging-ok';return'<div class="issue-card '+(days>=7?'aged':'')+'"><div class="issue-card-top"><div><div class="issue-accno">'+p.accountNo+'</div><div class="issue-name">'+(p.name||'&#8212;')+'</div></div><span class="aging-badge '+ag+'">'+days+'d old</span></div><div class="issue-meta">&#128205; '+(p.area||'&#8212;')+' &nbsp;&middot;&nbsp; TC: '+(p.telecallerStaffId||'&#8212;')+' &nbsp;&middot;&nbsp; EX: '+(p.executiveStaffId||'&#8212;')+' &nbsp;&middot;&nbsp; Strikes: '+(p.strikeCount||0)+'</div>'+(p.status?'<div style="margin-top:6px;"><span style="font-size:10px;padding:3px 8px;border-radius:20px;background:var(--accent-lt);color:var(--accent);font-family:var(--font-mono);font-weight:600;">'+p.status+'</span></div>':'')+'</div>';}).join('');}
+async function loadIssues(){const res=await api({action:'get_issues',city:session.city});allIssues=res.success?(res.data||[]):demoIssues();renderIssuesList();}
+function renderIssuesList(){document.getElementById('issuesCount').textContent=allIssues.length+' open issue'+(allIssues.length!==1?'s':'');var el=document.getElementById('issuesList');if(!allIssues.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">&#9989;</div><div class="empty-text">No open issues</div></div>';return;}el.innerHTML=allIssues.map(i=>'<div class="issue-card '+((i.agingDays||0)>=5?'aged':'')+'"><div class="issue-card-top"><div><div class="issue-accno">'+i.accountNo+'</div><div class="issue-name">'+(i.name||'&#8212;')+'</div></div><span style="font-size:10px;padding:3px 9px;border-radius:20px;background:var(--accent-lt);color:var(--text2);border:1px solid var(--border2);font-family:var(--font-mono);font-weight:600;">'+(i.issueType||'?')+'</span></div><div class="issue-meta">&#128205; '+(i.area||'&#8212;')+' &nbsp;&middot;&nbsp; Raised: '+(i.dateRaised||'&#8212;')+' &nbsp;&middot;&nbsp; '+(i.agingDays||0)+'d ago</div></div>').join('');}
+async function loadTeamPerf(){const res=await api({action:'get_leaderboard',city:session.city});if(res.success&&res.data){renderTCPerf(res.data.telecallers||[]);renderExecPerf(res.data.executives||[]);}else{renderTCPerf(demoTCPerf());renderExecPerf(demoExecPerf());}}
+function renderTCPerf(list){var el=document.getElementById('tcPerfList');if(!list.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">&#128222;</div><div class="empty-text">No data</div></div>';return;}el.innerHTML=list.map(t=>{var pct=Math.min(100,Math.round(((t.closures||0)/30)*100));return'<div class="data-row" style="flex-direction:column;align-items:stretch;gap:8px;"><div style="display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:14px;font-weight:600;color:var(--text);">'+(t.staffName||t.staffId)+'</div><div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">'+t.staffId+'</div></div><div style="text-align:right;"><div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--accent);">'+(t.closures||0)+'</div><div style="font-size:10px;color:var(--text3);">closures</div></div></div><div style="background:var(--bg3);border-radius:4px;height:6px;overflow:hidden;"><div style="height:100%;width:'+pct+'%;background:var(--accent);border-radius:4px;transition:width .6s;"></div></div><div style="display:flex;gap:12px;font-size:11px;color:var(--text3);font-family:var(--font-mono);"><span>Calls: <b style="color:var(--text);">'+(t.calls||0)+'</b></span><span>Appts: <b style="color:var(--green);">'+(t.appts||0)+'</b></span><span>Target: 30 ('+pct+'%)</span></div></div>';}).join('');}
+function renderExecPerf(list){var el=document.getElementById('execPerfList');if(!list.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">&#128692;</div><div class="empty-text">No data</div></div>';return;}el.innerHTML=list.map((e,idx)=>'<div class="data-row"><div style="display:flex;align-items:center;gap:10px;flex:1;"><div style="width:28px;height:28px;border-radius:50%;background:var(--accent-lt);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:13px;font-weight:800;color:var(--accent);">'+(idx+1)+'</div><div><div style="font-size:14px;font-weight:600;color:var(--text);">'+(e.staffName||e.staffId)+'</div><div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">'+e.staffId+'</div></div></div><div style="text-align:right;"><div style="font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--green);">'+(e.collected||0)+'</div><div style="font-size:10px;color:var(--text3);">collected</div></div></div>').join('');}
+async function loadCoolingPool(){var el=document.getElementById('coolingList'),state=document.getElementById('cpStateFilter').value;el.innerHTML='<div class="empty-state"><div class="empty-icon">&#129398;</div><div class="empty-text">Loading...</div></div>';var params={action:'get_cooling_pool',city:session.city};if(state!=='ALL')params.state=state;var res=await api(params);_coolingData=res.success?(res.data||[]):[];renderCoolingList();updateCoolingSummary();}
+function renderCoolingList(){var rf=(document.getElementById('cpReasonFilter').value||'').toLowerCase();var list=rf?_coolingData.filter(r=>(r.reason||'').toLowerCase().includes(rf)):_coolingData;document.getElementById('cpCount').textContent=list.length+' record'+(list.length!==1?'s':'');var el=document.getElementById('coolingList');if(!list.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">&#129398;</div><div class="empty-text">No records found</div><div class="empty-sub">Try changing the filters</div></div>';return;}el.innerHTML=list.map(r=>{var badge='cp-issue';var reason=r.reason||'';if(reason.includes('Line'))badge='cp-line';else if(reason.includes('Safe'))badge='cp-safe';else if(reason.includes('React'))badge='cp-reactiv';else if(r.state==='Released')badge='cp-released';var days=r.daysLeft||0;var isOver=r.overdue;var daysStr=r.state==='Released'?'Released':isOver?'Overdue '+Math.abs(days)+'d':days+'d left';var daysColor=r.state==='Released'?'var(--green)':isOver?'var(--red)':days<=2?'var(--amber)':'var(--text3)';var btn=r.state==='Cooling'?('<button class="btn-release" onclick="releaseAccount('+JSON.stringify(r.accountNo)+')" >Release Now</button>'):'<span style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">Done</span>';return'<div class="cp-card '+(isOver?'overdue':'')+'"><div class="cp-card-top"><div><div class="cp-accno">'+r.accountNo+'</div><div class="cp-name">'+(r.name||'&#8212;')+'</div></div><span class="cp-reason-badge '+badge+'">'+(r.reason||'?')+'</span></div><div class="cp-meta">&#128205; '+(r.area||'&#8212;')+'&nbsp;&nbsp;&#128197; Release: '+(r.releaseAfter||'&#8212;')+'&nbsp;&nbsp;<span style="color:'+daysColor+';font-weight:700;">'+daysStr+'</span><br>Last owner: '+(r.lastOwner||'&#8212;')+'&nbsp;&nbsp;TC: '+(r.assignedTC||'&#8212;')+'</div><div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:10px;padding:3px 9px;border-radius:20px;font-family:var(--font-mono);font-weight:700;'+(r.state==='Cooling'?'background:var(--amber-lt);color:var(--amber);border:1px solid #fde68a;':'background:var(--green-lt);color:var(--green);border:1px solid #86efac;')+'">'+r.state+'</span>'+btn+'</div></div>';}).join('');}
+function updateCoolingSummary(){var cooling=_coolingData.filter(r=>r.state==='Cooling').length;var overdue=_coolingData.filter(r=>r.overdue).length;var released=_coolingData.filter(r=>r.state==='Released').length;document.getElementById('cpTotal').textContent=cooling;document.getElementById('cpOverdue').textContent=overdue;document.getElementById('cpReleased').textContent=released;}
+async function releaseAccount(accountNo){if(!confirm('Release '+accountNo+' back into the workable base now?'))return;showLoader('Releasing...');var res=await apiPost('release_from_cooling',{city:session.city,accountNo});hideLoader();if(res.success){toast('Released: '+accountNo+' back to Fresh','success');loadCoolingPool();}else{toast(res.error||'Release failed','error');}}
+async function doCreateStaff(){var body={city:document.getElementById('csCity').value,role:document.getElementById('csRole').value,staffName:document.getElementById('csName').value.trim(),pin:document.getElementById('csPin').value.trim(),area:document.getElementById('csArea').value.trim()};if(!body.staffName||!body.pin){toast('Fill all required fields','error');return;}showLoader('Creating staff...');var res=await apiPost('create_staff',body);hideLoader();if(res.success){toast('Created: '+res.data.staffId,'success');closeSheet();loadStaffList();}else{toast(res.error||'Failed','error');}}
+async function doResetPin(){var targetStaffId=document.getElementById('rpStaffId').value.trim().toUpperCase(),newPin=document.getElementById('rpPin').value.trim();if(!targetStaffId||!newPin){toast('Fill all fields','error');return;}showLoader('Resetting PIN...');var res=await apiPost('reset_pin',{city:session.city,targetStaffId,newPin});hideLoader();if(res.success){toast('PIN reset for '+targetStaffId,'success');closeSheet();}else{toast(res.error||'Failed','error');}}
+async function doToggleStaff(){var targetStaffId=document.getElementById('tsStaffId').value.trim().toUpperCase(),active=document.getElementById('tsStatus').value==='true';showLoader('Updating...');var res=await apiPost('toggle_staff_active',{city:session.city,targetStaffId,active});hideLoader();if(res.success){toast('Updated: '+targetStaffId,'success');closeSheet();loadStaffList();}else{toast(res.error||'Failed','error');}}
+async function doUploadBase(){var batchNo=document.getElementById('ubBatch').value.trim(),city=document.getElementById('ubCity').value;if(!batchNo){toast('Enter batch label','error');return;}showLoader('Running pipeline...');var res=await apiPost('upload_base',{city,batchNo});hideLoader();if(res.success){toast('Uploaded - '+(res.data.workable||0)+' workable','success');closeSheet();}else{toast(res.error||'Failed','error');}}
+async function doAssignTC(){var batchNo=document.getElementById('atBatch').value.trim(),telecallerStaffId=document.getElementById('atTCId').value.trim().toUpperCase(),city=document.getElementById('atCity').value;if(!batchNo||!telecallerStaffId){toast('Fill all fields','error');return;}showLoader('Assigning...');var res=await apiPost('assign_telecaller',{city,batchNo,telecallerStaffId});hideLoader();if(res.success){toast('Telecaller assigned','success');closeSheet();}else{toast(res.error||'Failed','error');}}
+async function doAutoAssign(){var city=document.getElementById('aaCity').value;showLoader('Auto assigning...');var res=await apiPost('auto_assign_execs',{city});hideLoader();if(res.success){toast('Execs auto-assigned','success');closeSheet();}else{toast(res.error||'Failed','error');}}
+async function doReassign(){var accountNo=document.getElementById('reassignAccNo').value.trim().toUpperCase(),toStaffId=document.getElementById('reassignTo').value.trim().toUpperCase(),reason=document.getElementById('reassignReason').value.trim();if(!accountNo||!toStaffId){toast('Enter account no and staff ID','error');return;}showLoader('Reassigning...');var res=await apiPost('reassign_account',{city:session.city,accountNo,toStaffId,reason});hideLoader();if(res.success){toast('Reassigned to '+toStaffId,'success');document.getElementById('reassignAccNo').value='';document.getElementById('reassignTo').value='';document.getElementById('reassignReason').value='';}else{toast(res.error||'Failed','error');}}
+async function doSaveAreaMap(){var area=document.getElementById('amArea').value.trim(),executiveStaffId=document.getElementById('amExecId').value.trim().toUpperCase();if(!area||!executiveStaffId){toast('Enter area and exec ID','error');return;}showLoader('Saving...');var res=await apiPost('set_fx_area_mapping',{city:session.city,mappings:[{staffId:executiveStaffId,area}]});hideLoader();if(res.success){toast('Mapping saved','success');document.getElementById('amArea').value='';document.getElementById('amExecId').value='';}else{toast(res.error||'Failed','error');}}
+function openSheet(id){document.getElementById('overlay').classList.add('open');document.getElementById(id).classList.add('open');document.body.style.overflow='hidden';}
+function closeSheet(){document.getElementById('overlay').classList.remove('open');document.querySelectorAll('.bottom-sheet').forEach(s=>s.classList.remove('open'));document.body.style.overflow='';}
+function showLoader(t){document.getElementById('loaderText').textContent=t||'Loading...';document.getElementById('loader').classList.add('show');}
+function hideLoader(){document.getElementById('loader').classList.remove('show');}
+var _tt;function toast(msg,type){clearTimeout(_tt);var el=document.getElementById('toast');el.textContent=msg;el.className='toast '+(type||'');requestAnimationFrame(()=>el.classList.add('show'));_tt=setTimeout(()=>el.classList.remove('show'),3200);}
+function doLogout(){session=null;allStaff=[];allPending=[];allIssues=[];_coolingData=[];document.getElementById('app').style.display='none';document.getElementById('loginScreen').style.display='flex';document.getElementById('loginPin').value='';closeSheet();}
+function demoStaff(){return[{staffId:'AD_001',staffName:'Arun',role:'ADMIN',city:'CBE',area:'',active:true},{staffId:'SV_001',staffName:'Gawtham',role:'SUPERVISOR',city:'CBE',area:'ALL',active:true},{staffId:'TC_001',staffName:'Jamuna',role:'TELECALLER',city:'CBE',area:'',active:true},{staffId:'EX_001',staffName:'Suresh',role:'EXECUTIVE',city:'CBE',area:'RS Puram',active:true}];}
+function demoPending(){return[{accountNo:'ACT001234',name:'Rajesh Kumar',area:'RS Puram',telecallerStaffId:'TC_001',executiveStaffId:'EX_001',strikeCount:0,agingDays:2,status:'Appt Fixed'},{accountNo:'ACT005678',name:'Priya Suresh',area:'Tatabad',telecallerStaffId:'TC_002',executiveStaffId:'EX_001',strikeCount:1,agingDays:8,status:'Not Visited'}];}
+function demoIssues(){return[{accountNo:'ACT013456',name:'Kavitha Rajan',area:'Peelamedu',issueType:'Junction Box',dateRaised:'08 Mar 2026',agingDays:3},{accountNo:'ACT021234',name:'Suresh Babu',area:'Saibaba Colony',issueType:'Refund Request',dateRaised:'06 Mar 2026',agingDays:5}];}
+function demoTCPerf(){return[{staffId:'TC_001',staffName:'Jamuna',closures:18,calls:112,appts:24},{staffId:'TC_002',staffName:'Sudha',closures:14,calls:87,appts:19}];}
+function demoExecPerf(){return[{staffId:'EX_001',staffName:'Suresh',collected:24},{staffId:'EX_002',staffName:'Santhosh',collected:19},{staffId:'EX_003',staffName:'Nandha',collected:14}];}
+document.getElementById('loginPin').addEventListener('keyup',e=>{if(e.key==='Enter')doLogin();});
 </script>
 </body>
 </html>
