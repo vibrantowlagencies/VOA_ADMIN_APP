@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>VOA Admin Panel v1.5.2</title>
+<title>VOA Admin Panel v1.5.3</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#faf8ff;--bg2:#ffffff;--bg3:#f3f0ff;--card:#ffffff;--border:#e5e0f8;--border2:#cfc8f0;--accent:#7c3aed;--accent-lt:#f5f3ff;--accent-md:#8b5cf6;--accent-dk:#6d28d9;--blue:#3b82f6;--blue-lt:#eff6ff;--green:#16a34a;--green-lt:#f0fdf4;--red:#dc2626;--red-lt:#fef2f2;--amber:#d97706;--amber-lt:#fffbeb;--cyan:#0891b2;--cyan-lt:#ecfeff;--orange:#f97316;--orange-lt:#fff4ed;--text:#1a0f3c;--text2:#4c3d7a;--text3:#9b8ec4;--shadow-sm:0 1px 3px rgba(124,58,237,.06),0 1px 2px rgba(0,0,0,.04);--shadow:0 4px 16px rgba(124,58,237,.1);--shadow-lg:0 8px 32px rgba(124,58,237,.14);--radius:14px;--font-head:'Sora',sans-serif;--font-mono:'JetBrains Mono',monospace;--font-body:'Plus Jakarta Sans',sans-serif;}
@@ -331,12 +331,28 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
   <div class="sheet-body"><div id="batchInfoBody"><div class="empty-state"><div class="empty-icon">&#128203;</div><div class="empty-text">Loading...</div></div></div></div>
 </div>
 <script>
+// ============================================================
+// FILE    : Admin_App_v1.5.3.html
+// Version : 1.5.3
+// Updated : 2026-03-22
+// Changes :
+//   v1.5.3 - Session persistence added
+//            - Login session saved to localStorage
+//            - Back button / page refresh no longer logs out
+//            - Token expiry auto-checked on restore
+//            - Logout clears session from localStorage
+//   v1.5.2 - Unified production release
+//            - Cooling Pool tab added with Release Now button
+//            - Purple/violet theme applied (matching live site)
+//            - get_cooling_pool and release_from_cooling API integrated
+// ============================================================
+
 const API_URL='https://script.google.com/macros/s/AKfycbwsGJ0HI7smnWk-3Cpcno6BJbRwbWHe3ZaAhPavTmHE4IrIG9Kk0t_7mQqh9x_fTHnI/exec',CLIENT_ID='LIVARA_CBE';
 const ADMIN_ROLES=['ADMIN','OPS_MANAGER','SUPERVISOR'];
 let session=null,allStaff=[],allPending=[],allIssues=[],_coolingData=[];
 async function api(p){p.client_id=p.client_id||CLIENT_ID;if(session)p.token=session.token;try{const r=await fetch(API_URL+'?'+new URLSearchParams(p));return await r.json();}catch(e){return{success:false,error:e.message};}}
 async function apiPost(action,body){body.client_id=CLIENT_ID;body.action=action;if(session)body.token=session.token;try{const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});return await r.json();}catch(e){try{const r2=await fetch(API_URL+'?'+new URLSearchParams(body));return await r2.json();}catch(e2){return{success:false,error:'Network error'};}}}
-async function doLogin(){const city=document.getElementById('loginCity').value,staffId=document.getElementById('loginStaffId').value.trim().toUpperCase(),pin=document.getElementById('loginPin').value.trim();document.getElementById('loginError').style.display='none';if(!staffId||!pin){showErr('Enter Staff ID and PIN');return;}showLoader('Authenticating...');const res=await api({action:'login',city,staffId,pin});hideLoader();if(!res.success){showErr(res.error||'Login failed');return;}if(!ADMIN_ROLES.includes(res.data.role)){showErr('Access denied — Admin/Supervisor only');return;}session=res.data;startApp();}
+async function doLogin(){const city=document.getElementById('loginCity').value,staffId=document.getElementById('loginStaffId').value.trim().toUpperCase(),pin=document.getElementById('loginPin').value.trim();document.getElementById('loginError').style.display='none';if(!staffId||!pin){showErr('Enter Staff ID and PIN');return;}showLoader('Authenticating...');const res=await api({action:'login',city,staffId,pin});hideLoader();if(!res.success){showErr(res.error||'Login failed');return;}if(!ADMIN_ROLES.includes(res.data.role)){showErr('Access denied — Admin/Supervisor only');return;}session=res.data; try{localStorage.setItem("voa_session_admin", JSON.stringify(session));}catch(e){}startApp();}
 function showErr(m){const e=document.getElementById('loginError');e.textContent=m;e.style.display='block';}
 function startApp(){document.getElementById('loginScreen').style.display='none';document.getElementById('app').style.display='block';document.getElementById('headerBadge').textContent=session.staffId+' · '+session.city;document.getElementById('headerRole').textContent=session.role;buildTabs();loadOverview();loadPending();loadIssues();loadCoolingPool();}
 function buildTabs(){const role=session.role;const tabs=[{id:'overview',label:'Overview',page:'pageOverview'}];if(role==='ADMIN'){tabs.push({id:'staff',label:'Staff',page:'pageStaff'});tabs.push({id:'assign',label:'Assign',page:'pageAssign'});}if(role==='SUPERVISOR'){tabs.push({id:'assign',label:'Reassign',page:'pageAssign'});tabs.push({id:'team',label:'Team',page:'pageTeam'});}tabs.push({id:'pending',label:'Pending',page:'pagePending'});tabs.push({id:'issues',label:'Issues',page:'pageIssues'});tabs.push({id:'cooling',label:'Cooling Pool',page:'pageCooling'});document.getElementById('tabNav').innerHTML=tabs.map((t,i)=>'<button class="tab-btn '+(i===0?'active':'')+'" id="tabBtn_'+t.id+'" data-tid="'+t.id+'" data-page="'+t.page+'">'+t.label+'</button>').join('');document.getElementById('tabNav').querySelectorAll('[data-tid]').forEach(function(b){b.addEventListener('click',function(){switchTab(this.dataset.tid,this.dataset.page);});});document.getElementById('pageOverview').classList.add('active');if(role==='ADMIN')loadStaffList();if(role==='SUPERVISOR')loadTeamPerf();}
@@ -370,13 +386,71 @@ function closeSheet(){document.getElementById('overlay').classList.remove('open'
 function showLoader(t){document.getElementById('loaderText').textContent=t||'Loading...';document.getElementById('loader').classList.add('show');}
 function hideLoader(){document.getElementById('loader').classList.remove('show');}
 var _tt;function toast(msg,type){clearTimeout(_tt);var el=document.getElementById('toast');el.textContent=msg;el.className='toast '+(type||'');requestAnimationFrame(()=>el.classList.add('show'));_tt=setTimeout(()=>el.classList.remove('show'),3200);}
-function doLogout(){session=null;allStaff=[];allPending=[];allIssues=[];_coolingData=[];document.getElementById('app').style.display='none';document.getElementById('loginScreen').style.display='flex';document.getElementById('loginPin').value='';closeSheet();}
+function doLogout(){session=null; try{localStorage.removeItem("voa_session_admin");}catch(e){}allStaff=[];allPending=[];allIssues=[];_coolingData=[];document.getElementById('app').style.display='none';document.getElementById('loginScreen').style.display='flex';document.getElementById('loginPin').value='';closeSheet();}
 function demoStaff(){return[{staffId:'AD_001',staffName:'Arun',role:'ADMIN',city:'CBE',area:'',active:true},{staffId:'SV_001',staffName:'Gawtham',role:'SUPERVISOR',city:'CBE',area:'ALL',active:true},{staffId:'TC_001',staffName:'Jamuna',role:'TELECALLER',city:'CBE',area:'',active:true},{staffId:'EX_001',staffName:'Suresh',role:'EXECUTIVE',city:'CBE',area:'RS Puram',active:true}];}
 function demoPending(){return[{accountNo:'ACT001234',name:'Rajesh Kumar',area:'RS Puram',telecallerStaffId:'TC_001',executiveStaffId:'EX_001',strikeCount:0,agingDays:2,status:'Appt Fixed'},{accountNo:'ACT005678',name:'Priya Suresh',area:'Tatabad',telecallerStaffId:'TC_002',executiveStaffId:'EX_001',strikeCount:1,agingDays:8,status:'Not Visited'}];}
 function demoIssues(){return[{accountNo:'ACT013456',name:'Kavitha Rajan',area:'Peelamedu',issueType:'Junction Box',dateRaised:'08 Mar 2026',agingDays:3},{accountNo:'ACT021234',name:'Suresh Babu',area:'Saibaba Colony',issueType:'Refund Request',dateRaised:'06 Mar 2026',agingDays:5}];}
 function demoTCPerf(){return[{staffId:'TC_001',staffName:'Jamuna',closures:18,calls:112,appts:24},{staffId:'TC_002',staffName:'Sudha',closures:14,calls:87,appts:19}];}
 function demoExecPerf(){return[{staffId:'EX_001',staffName:'Suresh',collected:24},{staffId:'EX_002',staffName:'Santhosh',collected:19},{staffId:'EX_003',staffName:'Nandha',collected:14}];}
 document.getElementById('loginPin').addEventListener('keyup',e=>{if(e.key==='Enter')doLogin();});
+
+// ── SESSION RESTORE ─────────────────────────────────────
+// Restore session from localStorage on page load / back navigation
+(function restoreSession() {
+  try {
+    var stored = localStorage.getItem("voa_session_admin");
+    if (!stored) return;
+    var saved = JSON.parse(stored);
+    if (!saved || !saved.token) return;
+
+    // Validate token is not expired (token format: staffId|role|city|clientId|expires)
+    var parts = saved.token.split('|');
+    if (parts.length < 5) { localStorage.removeItem("voa_session_admin"); return; }
+    var expires = parseInt(parts[4]);
+    if (isNaN(expires) || Date.now() > expires) {
+      localStorage.removeItem("voa_session_admin");
+      console.log('[Session] Token expired — showing login');
+      return;
+    }
+
+    // Valid session — restore and skip login
+    session = saved;
+    console.log('[Session] Restored for', session.staffId);
+    if (typeof startApp === 'function') {
+      startApp();
+    } else if (typeof initApp === 'function') {
+      initApp();
+    }
+  } catch(e) {
+    console.warn('[Session] Restore failed:', e.message);
+  }
+})();
+
+// ── SESSION RESTORE ──────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var stored = localStorage.getItem("voa_session_admin");
+    if (!stored) return;
+    var saved = JSON.parse(stored);
+    if (!saved || !saved.token) return;
+
+    // Check token expiry
+    var parts = saved.token.split('|');
+    if (parts.length < 5) { localStorage.removeItem("voa_session_admin"); return; }
+    var expires = parseInt(parts[4]);
+    if (isNaN(expires) || Date.now() > expires) {
+      localStorage.removeItem("voa_session_admin");
+      return;
+    }
+
+    // Valid — restore session and skip login
+    session = saved;
+    if (typeof startApp === 'function') startApp();
+    else if (typeof initApp === 'function') initApp();
+  } catch(e) {
+    try { localStorage.removeItem("voa_session_admin"); } catch(e2) {}
+  }
+});
 </script>
 </body>
 </html>
