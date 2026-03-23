@@ -3,7 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>VOA Admin Panel v1.5.3</title>
+<title>VOA Admin Panel v1.6.0</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
+function autoUpdateBatchLabel() {
+  var batchEl = document.getElementById('ubBatch');
+  if(!batchEl || batchEl.value) return; // don't overwrite if already set
+  var now = new Date();
+  var months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  var city   = document.getElementById('ubCity').value || 'CBE';
+  batchEl.value = city+'_'+months[now.getMonth()]+'_'+now.getFullYear()+'_1';
+}
+
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#faf8ff;--bg2:#ffffff;--bg3:#f3f0ff;--card:#ffffff;--border:#e5e0f8;--border2:#cfc8f0;--accent:#7c3aed;--accent-lt:#f5f3ff;--accent-md:#8b5cf6;--accent-dk:#6d28d9;--blue:#3b82f6;--blue-lt:#eff6ff;--green:#16a34a;--green-lt:#f0fdf4;--red:#dc2626;--red-lt:#fef2f2;--amber:#d97706;--amber-lt:#fffbeb;--cyan:#0891b2;--cyan-lt:#ecfeff;--orange:#f97316;--orange-lt:#fff4ed;--text:#1a0f3c;--text2:#4c3d7a;--text3:#9b8ec4;--shadow-sm:0 1px 3px rgba(124,58,237,.06),0 1px 2px rgba(0,0,0,.04);--shadow:0 4px 16px rgba(124,58,237,.1);--shadow-lg:0 8px 32px rgba(124,58,237,.14);--radius:14px;--font-head:'Sora',sans-serif;--font-mono:'JetBrains Mono',monospace;--font-body:'Plus Jakarta Sans',sans-serif;}
@@ -134,6 +145,29 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .empty-icon{font-size:44px;margin-bottom:10px;opacity:.35;}
 .empty-text{font-size:15px;color:var(--text2);font-weight:600;}
 .empty-sub{font-size:13px;color:var(--text3);margin-top:6px;}
+
+/* ── TEAM PERFORMANCE ── */
+.perf-period-btn{flex:1;padding:9px 6px;border-radius:10px;background:var(--bg3);border:1.5px solid var(--border);font-family:var(--font-head);font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;transition:all .2s;}
+.perf-period-btn.active{background:var(--accent-lt);border-color:var(--accent);color:var(--accent);}
+.perf-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;box-shadow:var(--shadow-sm);}
+.perf-card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.perf-name{font-size:14px;font-weight:700;color:var(--text);}
+.perf-id{font-size:11px;color:var(--text3);font-family:var(--font-mono);}
+.perf-bar-outer{background:var(--bg3);border-radius:4px;height:7px;overflow:hidden;margin-bottom:6px;}
+.perf-bar-inner{height:100%;border-radius:4px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.perf-meta{display:flex;gap:14px;font-size:11px;color:var(--text3);font-family:var(--font-mono);}
+/* ── FILE UPLOAD ── */
+.file-drop-zone{border:2px dashed var(--border2);border-radius:var(--radius);padding:24px 16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg3);}
+.file-drop-zone.dragover{border-color:var(--accent);background:var(--accent-lt);}
+.file-drop-zone:hover{border-color:var(--accent);background:var(--accent-lt);}
+.file-drop-icon{font-size:32px;margin-bottom:8px;}
+.file-drop-label{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.file-drop-sub{font-size:11px;color:var(--text3);}
+.file-selected{background:var(--green-lt);border:1.5px solid var(--green);border-radius:var(--radius);padding:12px 14px;margin-bottom:10px;display:none;}
+.file-selected.show{display:flex;align-items:center;gap:10px;}
+.file-name{font-size:13px;font-weight:600;color:var(--green);flex:1;}
+.file-rows{font-size:11px;color:var(--text3);font-family:var(--font-mono);}
+
 </style>
 </head>
 <body>
@@ -248,6 +282,21 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
     <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px;" id="cpCount"></div>
     <div id="coolingList"><div class="empty-state"><div class="empty-icon">&#129398;</div><div class="empty-text">Loading...</div></div></div>
   </div>
+  <!-- ── PERFORMANCE TAB (v1.6.0) ── -->
+  <div class="tab-page" id="pagePerformance">
+    <div class="section-title">Team Performance</div>
+    <div class="section-sub">Live MTD stats for all telecallers and executives</div>
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+      <button class="perf-period-btn active" id="perfBtnMtd"   onclick="setPerfPeriod('mtd')"  >This Month</button>
+      <button class="perf-period-btn"        id="perfBtnWeek"  onclick="setPerfPeriod('week')" >This Week</button>
+      <button class="perf-period-btn"        id="perfBtnToday" onclick="setPerfPeriod('today')">Today</button>
+    </div>
+    <div class="sub-label">Telecallers</div>
+    <div id="adminTCPerf"><div class="empty-state"><div class="empty-icon">&#128222;</div><div class="empty-text">Loading...</div></div></div>
+    <div class="divider"></div>
+    <div class="sub-label">Field Executives</div>
+    <div id="adminExecPerf"><div class="empty-state"><div class="empty-icon">&#128692;</div><div class="empty-text">Loading...</div></div></div>
+  </div>
 </div>
 <div class="sheet-overlay" id="overlay" onclick="closeSheet()"></div>
 <div class="bottom-sheet" id="createStaffSheet">
@@ -284,12 +333,32 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
   <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
   <div class="sheet-header"><div class="sheet-title">Upload New Base</div><div class="sheet-close" onclick="closeSheet()">&#x2715;</div></div>
   <div class="sheet-body">
-    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">Paste the ACT data range name or Sheet tab name below. The pipeline will filter duplicates and historic accounts automatically.</p>
-    <div class="field-group"><label class="field-label">Batch Label</label><input class="field-input" id="ubBatch" placeholder="e.g. VOA_APR_2026_1"></div>
-    <div class="field-group"><label class="field-label">Source Sheet Tab Name</label><input class="field-input" id="ubSource" placeholder="e.g. ACT_Raw_Base"></div>
-    <div class="field-group"><label class="field-label">City</label><select class="field-select" id="ubCity"><option value="CBE">Coimbatore (CBE)</option><option value="CHN">Chennai (CHN)</option></select></div>
-    <button class="btn-primary" onclick="doUploadBase()">&#9654; Run Pipeline</button>
-    <p style="font-size:11px;color:var(--text3);margin-top:12px;text-align:center;">Duplicates + historic accounts will be filtered automatically</p>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6;">
+      Attach the ACT Excel or CSV file. System will parse, filter duplicates and historic accounts automatically.
+    </p>
+    <!-- File Drop Zone -->
+    <div class="file-drop-zone" id="fileDropZone" onclick="document.getElementById('ubFileInput').click()"
+         ondragover="event.preventDefault();this.classList.add('dragover')"
+         ondragleave="this.classList.remove('dragover')"
+         ondrop="handleFileDrop(event)">
+      <div class="file-drop-icon">&#128228;</div>
+      <div class="file-drop-label">Tap to attach ACT base file</div>
+      <div class="file-drop-sub">Supports .xlsx, .xls, .csv &nbsp;&#183;&nbsp; Max 5MB</div>
+    </div>
+    <input type="file" id="ubFileInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleFileSelect(event)">
+    <!-- File selected indicator -->
+    <div class="file-selected" id="fileSelected">
+      <span style="font-size:20px">&#9989;</span>
+      <div style="flex:1">
+        <div class="file-name" id="fileSelectedName">file.xlsx</div>
+        <div class="file-rows" id="fileSelectedRows">0 rows detected</div>
+      </div>
+      <button onclick="clearFile()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;">&#x2715;</button>
+    </div>
+    <div class="field-group" style="margin-top:12px;"><label class="field-label">Batch Label</label><input class="field-input" id="ubBatch" placeholder="e.g. CBE_APR_2026_1"></div>
+    <div class="field-group"><label class="field-label">City</label><select class="field-select" id="ubCity" onchange="autoUpdateBatchLabel()"><option value="CBE">Coimbatore (CBE)</option><option value="CHN">Chennai (CHN)</option></select></div>
+    <button class="btn-primary" id="ubRunBtn" onclick="doUploadBase()" disabled style="opacity:.45;">&#9654; Run Pipeline</button>
+    <p style="font-size:11px;color:var(--text3);margin-top:10px;text-align:center;">Duplicates + accounts in Historic Memory filtered automatically</p>
   </div>
 </div>
 <div class="bottom-sheet" id="assignTCSheet">
@@ -332,11 +401,34 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 </div>
 <script>
 // ============================================================
-// FILE    : Admin_App_v1.5.3.html
+// FILE    : Admin_App_v1.6.0.html
+// Version : 1.6.0
+// Updated : 2026-03-23
+// Changes :
+//   v1.6.0 - File attachment for Upload Base
+//            - Drag & drop or tap to attach .xlsx/.xls/.csv
+//            - XLSX.js parses file in browser
+//            - Supports all common ACT column name variants
+//            - Rows sent directly to upload_base API
+//            - No manual sheet copy needed
+//          - Team Performance tab added
+//            - TC performance: closures, calls, appts, progress bar
+//            - Exec performance: collections, progress bar, medals
+//            - Period filter: Today / This Week / This Month
+//            - Summary strip for team totals
+//            - Loads automatically after login for Admin/Supervisor
+//   v1.5.3 - Session persistence (localStorage)
+//            - Back button no longer logs out
+//   v1.5.2 - Cooling Pool tab with Release Now
+//            - Purple theme matching live site
+// ============================================================
+
+// ============================================================
+// FILE    : Admin_App_v1.6.0.html
 // Version : 1.5.3
 // Updated : 2026-03-22
 // Changes :
-//   v1.5.3 - Session persistence added
+//   v1.6.0 - Session persistence added
 //            - Login session saved to localStorage
 //            - Back button / page refresh no longer logs out
 //            - Token expiry auto-checked on restore
@@ -354,8 +446,14 @@ async function api(p){p.client_id=p.client_id||CLIENT_ID;if(session)p.token=sess
 async function apiPost(action,body){body.client_id=CLIENT_ID;body.action=action;if(session)body.token=session.token;try{const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});return await r.json();}catch(e){try{const r2=await fetch(API_URL+'?'+new URLSearchParams(body));return await r2.json();}catch(e2){return{success:false,error:'Network error'};}}}
 async function doLogin(){const city=document.getElementById('loginCity').value,staffId=document.getElementById('loginStaffId').value.trim().toUpperCase(),pin=document.getElementById('loginPin').value.trim();document.getElementById('loginError').style.display='none';if(!staffId||!pin){showErr('Enter Staff ID and PIN');return;}showLoader('Authenticating...');const res=await api({action:'login',city,staffId,pin});hideLoader();if(!res.success){showErr(res.error||'Login failed');return;}if(!ADMIN_ROLES.includes(res.data.role)){showErr('Access denied — Admin/Supervisor only');return;}session=res.data; try{localStorage.setItem("voa_session_admin", JSON.stringify(session));}catch(e){}startApp();}
 function showErr(m){const e=document.getElementById('loginError');e.textContent=m;e.style.display='block';}
-function startApp(){document.getElementById('loginScreen').style.display='none';document.getElementById('app').style.display='block';document.getElementById('headerBadge').textContent=session.staffId+' · '+session.city;document.getElementById('headerRole').textContent=session.role;buildTabs();loadOverview();loadPending();loadIssues();loadCoolingPool();}
-function buildTabs(){const role=session.role;const tabs=[{id:'overview',label:'Overview',page:'pageOverview'}];if(role==='ADMIN'){tabs.push({id:'staff',label:'Staff',page:'pageStaff'});tabs.push({id:'assign',label:'Assign',page:'pageAssign'});}if(role==='SUPERVISOR'){tabs.push({id:'assign',label:'Reassign',page:'pageAssign'});tabs.push({id:'team',label:'Team',page:'pageTeam'});}tabs.push({id:'pending',label:'Pending',page:'pagePending'});tabs.push({id:'issues',label:'Issues',page:'pageIssues'});tabs.push({id:'cooling',label:'Cooling Pool',page:'pageCooling'});document.getElementById('tabNav').innerHTML=tabs.map((t,i)=>'<button class="tab-btn '+(i===0?'active':'')+'" id="tabBtn_'+t.id+'" data-tid="'+t.id+'" data-page="'+t.page+'">'+t.label+'</button>').join('');document.getElementById('tabNav').querySelectorAll('[data-tid]').forEach(function(b){b.addEventListener('click',function(){switchTab(this.dataset.tid,this.dataset.page);});});document.getElementById('pageOverview').classList.add('active');if(role==='ADMIN')loadStaffList();if(role==='SUPERVISOR')loadTeamPerf();}
+function startApp(){document.getElementById('loginScreen').style.display='none';document.getElementById('app').style.display='block';document.getElementById('headerBadge').textContent=session.staffId+' · '+session.city;document.getElementById('headerRole').textContent=session.role;buildTabs();loadOverview();loadPending();loadIssues();loadCoolingPool();
+  if(session.role==='ADMIN'||session.role==='SUPERVISOR'||session.role==='OPS_MANAGER'){
+    loadAdminPerf('mtd');
+  }}
+function buildTabs(){const role=session.role;const tabs=[{id:'overview',label:'Overview',page:'pageOverview'}];if(role==='ADMIN'){tabs.push({id:'staff',label:'Staff',page:'pageStaff'});tabs.push({id:'assign',label:'Assign',page:'pageAssign'});}if(role==='SUPERVISOR'){tabs.push({id:'assign',label:'Reassign',page:'pageAssign'});tabs.push({id:'team',label:'Team',page:'pageTeam'});}tabs.push({id:'pending',label:'Pending',page:'pagePending'});tabs.push({id:'issues',label:'Issues',page:'pageIssues'});tabs.push({id:'cooling',label:'Cooling Pool',page:'pageCooling'});
+  if(role==='ADMIN'||role==='SUPERVISOR'||role==='OPS_MANAGER'){
+    tabs.push({id:'performance',label:'Team Perf',page:'pagePerformance'});
+  }document.getElementById('tabNav').innerHTML=tabs.map((t,i)=>'<button class="tab-btn '+(i===0?'active':'')+'" id="tabBtn_'+t.id+'" data-tid="'+t.id+'" data-page="'+t.page+'">'+t.label+'</button>').join('');document.getElementById('tabNav').querySelectorAll('[data-tid]').forEach(function(b){b.addEventListener('click',function(){switchTab(this.dataset.tid,this.dataset.page);});});document.getElementById('pageOverview').classList.add('active');if(role==='ADMIN')loadStaffList();if(role==='SUPERVISOR')loadTeamPerf();}
 function switchTab(id,pageId){document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.tab-page').forEach(p=>p.classList.remove('active'));document.getElementById('tabBtn_'+id).classList.add('active');document.getElementById(pageId).classList.add('active');}
 async function loadOverview(){const res=await api({action:'get_overview',city:session.city});if(res.success){const d=res.data;document.getElementById('ovTotal').textContent=(d.pending||0)+(d.collected||0);document.getElementById('ovCollected').textContent=d.collected||0;document.getElementById('ovPending').textContent=d.pending||0;document.getElementById('ovIssues').textContent=d.issues||0;document.getElementById('ovCalls').textContent=d.calls||0;document.getElementById('ovAppts').textContent=d.appts||0;renderAlerts(d.alerts||[]);}}
 function renderAlerts(alerts){const el=document.getElementById('alertsList');if(!alerts.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">&#9989;</div><div class="empty-text">No active alerts</div></div>';return;}const colors={red:['var(--red-lt)','var(--red)','#fecaca'],amber:['var(--amber-lt)','var(--amber)','#fde68a'],blue:['var(--blue-lt)','var(--blue)','#93c5fd']};el.innerHTML=alerts.map(a=>{var c=colors[a.type]||colors.blue;return'<div style="background:'+c[0]+';border:1px solid '+c[2]+';border-radius:12px;padding:14px 16px;margin-bottom:8px;"><div style="font-size:14px;font-weight:700;color:'+c[1]+';font-family:var(--font-head);margin-bottom:2px;">'+a.title+'</div><div style="font-size:12px;color:var(--text2);">'+a.sub+'</div></div>';}).join('');}
@@ -376,7 +474,7 @@ async function releaseAccount(accountNo){if(!confirm('Release '+accountNo+' back
 async function doCreateStaff(){var body={city:document.getElementById('csCity').value,role:document.getElementById('csRole').value,staffName:document.getElementById('csName').value.trim(),pin:document.getElementById('csPin').value.trim(),area:document.getElementById('csArea').value.trim()};if(!body.staffName||!body.pin){toast('Fill all required fields','error');return;}showLoader('Creating staff...');var res=await apiPost('create_staff',body);hideLoader();if(res.success){toast('Created: '+res.data.staffId,'success');closeSheet();loadStaffList();}else{toast(res.error||'Failed','error');}}
 async function doResetPin(){var targetStaffId=document.getElementById('rpStaffId').value.trim().toUpperCase(),newPin=document.getElementById('rpPin').value.trim();if(!targetStaffId||!newPin){toast('Fill all fields','error');return;}showLoader('Resetting PIN...');var res=await apiPost('reset_pin',{city:session.city,targetStaffId,newPin});hideLoader();if(res.success){toast('PIN reset for '+targetStaffId,'success');closeSheet();}else{toast(res.error||'Failed','error');}}
 async function doToggleStaff(){var targetStaffId=document.getElementById('tsStaffId').value.trim().toUpperCase(),active=document.getElementById('tsStatus').value==='true';showLoader('Updating...');var res=await apiPost('toggle_staff_active',{city:session.city,targetStaffId,active});hideLoader();if(res.success){toast('Updated: '+targetStaffId,'success');closeSheet();loadStaffList();}else{toast(res.error||'Failed','error');}}
-async function doUploadBase(){var batchNo=document.getElementById('ubBatch').value.trim(),city=document.getElementById('ubCity').value;if(!batchNo){toast('Enter batch label','error');return;}showLoader('Running pipeline...');var res=await apiPost('upload_base',{city,batchNo});hideLoader();if(res.success){toast('Uploaded - '+(res.data.workable||0)+' workable','success');closeSheet();}else{toast(res.error||'Failed','error');}}
+// doUploadBase moved to File Attachment Module below
 async function doAssignTC(){var batchNo=document.getElementById('atBatch').value.trim(),telecallerStaffId=document.getElementById('atTCId').value.trim().toUpperCase(),city=document.getElementById('atCity').value;if(!batchNo||!telecallerStaffId){toast('Fill all fields','error');return;}showLoader('Assigning...');var res=await apiPost('assign_telecaller',{city,batchNo,telecallerStaffId});hideLoader();if(res.success){toast('Telecaller assigned','success');closeSheet();}else{toast(res.error||'Failed','error');}}
 async function doAutoAssign(){var city=document.getElementById('aaCity').value;showLoader('Auto assigning...');var res=await apiPost('auto_assign_execs',{city});hideLoader();if(res.success){toast('Execs auto-assigned','success');closeSheet();}else{toast(res.error||'Failed','error');}}
 async function doReassign(){var accountNo=document.getElementById('reassignAccNo').value.trim().toUpperCase(),toStaffId=document.getElementById('reassignTo').value.trim().toUpperCase(),reason=document.getElementById('reassignReason').value.trim();if(!accountNo||!toStaffId){toast('Enter account no and staff ID','error');return;}showLoader('Reassigning...');var res=await apiPost('reassign_account',{city:session.city,accountNo,toStaffId,reason});hideLoader();if(res.success){toast('Reassigned to '+toStaffId,'success');document.getElementById('reassignAccNo').value='';document.getElementById('reassignTo').value='';document.getElementById('reassignReason').value='';}else{toast(res.error||'Failed','error');}}
@@ -451,6 +549,309 @@ document.addEventListener('DOMContentLoaded', function() {
     try { localStorage.removeItem("voa_session_admin"); } catch(e2) {}
   }
 });
+
+// ══════════════════════════════════════════════════════════
+// TEAM PERFORMANCE MODULE (v1.6.0)
+// ══════════════════════════════════════════════════════════
+var _perfPeriod = 'mtd';
+
+function setPerfPeriod(period) {
+  _perfPeriod = period;
+  ['Mtd','Week','Today'].forEach(function(p) {
+    var btn = document.getElementById('perfBtn'+p);
+    if(btn) btn.classList.toggle('active', p.toLowerCase()===period || (p==='Mtd'&&period==='mtd'));
+  });
+  loadAdminPerf(period);
+}
+
+async function loadAdminPerf(period) {
+  document.getElementById('adminTCPerf').innerHTML   = '<div class="empty-state"><div class="empty-icon">&#128222;</div><div class="empty-text">Loading...</div></div>';
+  document.getElementById('adminExecPerf').innerHTML = '<div class="empty-state"><div class="empty-icon">&#128692;</div><div class="empty-text">Loading...</div></div>';
+
+  var res = await api({action:'get_leaderboard', city:session.city, period:period||'mtd'});
+
+  if(res.success && res.data) {
+    renderAdminTCPerf(res.data.telecallers||[]);
+    renderAdminExecPerf(res.data.executives||[]);
+  } else {
+    document.getElementById('adminTCPerf').innerHTML   = '<div class="empty-state"><div class="empty-icon">&#128222;</div><div class="empty-text">No data yet</div><div class="empty-sub">Data will appear after team starts logging calls</div></div>';
+    document.getElementById('adminExecPerf').innerHTML = '<div class="empty-state"><div class="empty-icon">&#128692;</div><div class="empty-text">No data yet</div><div class="empty-sub">Data will appear after executives log collections</div></div>';
+  }
+}
+
+function renderAdminTCPerf(list) {
+  var el = document.getElementById('adminTCPerf');
+  if(!list||!list.length) {
+    el.innerHTML='<div class="empty-state"><div class="empty-icon">&#128222;</div><div class="empty-text">No telecaller data</div></div>';
+    return;
+  }
+  // Sort by closures desc
+  list = list.slice().sort(function(a,b){return (b.closures||0)-(a.closures||0);});
+  var total_closures = list.reduce(function(s,t){return s+(t.closures||0);},0);
+  var total_calls    = list.reduce(function(s,t){return s+(t.calls||0);},0);
+  var total_appts    = list.reduce(function(s,t){return s+(t.appts||0);},0);
+
+  // Summary strip
+  var summary = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;">'
+    +'<div style="background:var(--accent-lt);border:1px solid rgba(124,58,237,.2);border-radius:12px;padding:12px;text-align:center;">'
+    +'<div style="font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--accent);">'+total_closures+'</div>'
+    +'<div style="font-size:10px;color:var(--text3);">Total Closures</div></div>'
+    +'<div style="background:var(--blue-lt);border:1px solid #93c5fd;border-radius:12px;padding:12px;text-align:center;">'
+    +'<div style="font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--blue);">'+total_calls+'</div>'
+    +'<div style="font-size:10px;color:var(--text3);">Total Calls</div></div>'
+    +'<div style="background:var(--green-lt);border:1px solid #86efac;border-radius:12px;padding:12px;text-align:center;">'
+    +'<div style="font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--green);">'+total_appts+'</div>'
+    +'<div style="font-size:10px;color:var(--text3);">Appts Fixed</div></div>'
+    +'</div>';
+
+  var cards = list.map(function(t, idx) {
+    var target  = t.target||30;
+    var pct     = Math.min(100, Math.round(((t.closures||0)/target)*100));
+    var barColor = pct>=80?'var(--green)':pct>=50?'var(--accent)':'var(--amber)';
+    var rankColor= idx===0?'var(--amber)':idx===1?'var(--text3)':idx===2?'#CD7F32':'var(--accent-lt)';
+    var rankBg   = idx===0?'var(--amber-lt)':idx===1?'var(--bg3)':idx===2?'#FFF4ED':'var(--accent-lt)';
+    return '<div class="perf-card">'
+      +'<div class="perf-card-top">'
+      +'<div style="display:flex;align-items:center;gap:10px;">'
+      +'<div class="perf-rank" style="background:'+rankBg+';color:'+rankColor+';">#'+(idx+1)+'</div>'
+      +'<div><div class="perf-name">'+(t.staffName||t.staffId)+'</div>'
+      +'<div class="perf-id">'+t.staffId+'</div></div></div>'
+      +'<div style="text-align:right;">'
+      +'<div class="perf-val" style="color:var(--accent);">'+(t.closures||0)+'</div>'
+      +'<div style="font-size:9px;color:var(--text3);">closures / '+target+' target</div>'
+      +'</div></div>'
+      +'<div class="perf-bar-outer"><div class="perf-bar-inner" style="width:'+pct+'%;background:'+barColor+';"></div></div>'
+      +'<div class="perf-meta">'
+      +'<span>Calls: <b style="color:var(--text);">'+(t.calls||0)+'</b></span>'
+      +'<span>Appts: <b style="color:var(--green);">'+(t.appts||0)+'</b></span>'
+      +'<span>Progress: <b style="color:'+barColor+';">'+pct+'%</b></span>'
+      +'</div></div>';
+  }).join('');
+  el.innerHTML = summary + cards;
+}
+
+function renderAdminExecPerf(list) {
+  var el = document.getElementById('adminExecPerf');
+  if(!list||!list.length) {
+    el.innerHTML='<div class="empty-state"><div class="empty-icon">&#128692;</div><div class="empty-text">No executive data</div></div>';
+    return;
+  }
+  list = list.slice().sort(function(a,b){return (b.collected||0)-(a.collected||0);});
+  var total = list.reduce(function(s,e){return s+(e.collected||0);},0);
+
+  var summary = '<div style="background:var(--cyan-lt);border:1px solid rgba(8,145,178,.3);border-radius:12px;padding:12px;text-align:center;margin-bottom:12px;">'
+    +'<div style="font-family:var(--font-head);font-size:26px;font-weight:800;color:var(--cyan);">'+total+'</div>'
+    +'<div style="font-size:10px;color:var(--text3);">Total Routers Collected</div></div>';
+
+  var cards = list.map(function(e, idx) {
+    var target   = 25;
+    var pct      = Math.min(100, Math.round(((e.collected||0)/target)*100));
+    var barColor = pct>=80?'var(--green)':pct>=50?'var(--cyan)':'var(--amber)';
+    var medal    = idx===0?'&#127941;':idx===1?'&#129352;':idx===2?'&#129353;':'';
+    return '<div class="perf-card">'
+      +'<div class="perf-card-top">'
+      +'<div style="display:flex;align-items:center;gap:10px;">'
+      +'<div style="font-size:20px;width:28px;text-align:center;">'+(medal||'<span style="font-family:var(--font-head);font-size:13px;font-weight:800;color:var(--text3);">#'+(idx+1)+'</span>')+'</div>'
+      +'<div><div class="perf-name">'+(e.staffName||e.staffId)+'</div>'
+      +'<div class="perf-id">'+e.staffId+'</div></div></div>'
+      +'<div style="text-align:right;">'
+      +'<div class="perf-val" style="color:var(--cyan);">'+(e.collected||0)+'</div>'
+      +'<div style="font-size:9px;color:var(--text3);">collected / '+target+' target</div>'
+      +'</div></div>'
+      +'<div class="perf-bar-outer"><div class="perf-bar-inner" style="width:'+pct+'%;background:'+barColor+';"></div></div>'
+      +'<div class="perf-meta"><span>Progress: <b style="color:'+barColor+';">'+pct+'%</b></span></div>'
+      +'</div>';
+  }).join('');
+  el.innerHTML = summary + cards;
+}
+
+// ══════════════════════════════════════════════════════════
+// FILE ATTACHMENT MODULE (v1.6.0)
+// ══════════════════════════════════════════════════════════
+var _parsedRows = [];
+
+function handleFileDrop(event) {
+  event.preventDefault();
+  document.getElementById('fileDropZone').classList.remove('dragover');
+  var file = event.dataTransfer.files[0];
+  if(file) processUploadFile(file);
+}
+
+function handleFileSelect(event) {
+  var file = event.target.files[0];
+  if(file) processUploadFile(file);
+}
+
+function clearFile() {
+  _parsedRows = [];
+  document.getElementById('fileSelected').classList.remove('show');
+  document.getElementById('ubFileInput').value = '';
+  document.getElementById('ubRunBtn').disabled = true;
+  document.getElementById('ubRunBtn').style.opacity = '.45';
+  document.getElementById('fileDropZone').style.display = 'block';
+}
+
+function processUploadFile(file) {
+  if(!file) return;
+  var ext = file.name.split('.').pop().toLowerCase();
+  if(!['xlsx','xls','csv'].includes(ext)) {
+    toast('Only .xlsx, .xls or .csv files allowed','error');
+    return;
+  }
+  if(file.size > 5*1024*1024) {
+    toast('File too large. Max 5MB','error');
+    return;
+  }
+
+  showLoader('Reading file...');
+  var reader = new FileReader();
+
+  reader.onload = function(e) {
+    try {
+      var rows = [];
+      if(ext === 'csv') {
+        var text  = e.target.result;
+        var lines = text.split('\n').map(function(l){return l.split(',');});
+        var hdrs  = lines[0].map(function(h){return h.trim().toLowerCase().replace(/[^a-z0-9]/g,'_');});
+        for(var i=1;i<lines.length;i++) {
+          if(!lines[i].join('').trim()) continue;
+          var row = {};
+          hdrs.forEach(function(h,j){row[h]=String(lines[i][j]||'').trim();});
+          rows.push(_mapFileRow(row, hdrs));
+        }
+      } else {
+        var wb   = XLSX.read(e.target.result, {type:'array'});
+        var ws   = wb.Sheets[wb.SheetNames[0]];
+        var data = XLSX.utils.sheet_to_json(ws, {defval:''});
+        rows     = data.map(function(row) {
+          // Normalise keys
+          var norm = {};
+          Object.keys(row).forEach(function(k){
+            norm[k.trim().toLowerCase().replace(/[^a-z0-9]/g,'_')] = String(row[k]||'').trim();
+          });
+          return _mapFileRow(norm, Object.keys(norm));
+        });
+      }
+
+      // Filter out completely empty rows
+      rows = rows.filter(function(r){return r.accountNo && r.accountNo.length > 2;});
+
+      if(!rows.length) {
+        hideLoader();
+        toast('No valid account rows found. Check file format.','error');
+        return;
+      }
+
+      _parsedRows = rows;
+      hideLoader();
+
+      // Show file info
+      document.getElementById('fileDropZone').style.display = 'none';
+      document.getElementById('fileSelected').classList.add('show');
+      document.getElementById('fileSelectedName').textContent = file.name;
+      document.getElementById('fileSelectedRows').textContent = rows.length + ' account rows detected';
+
+      // Enable run button
+      document.getElementById('ubRunBtn').disabled = false;
+      document.getElementById('ubRunBtn').style.opacity = '1';
+
+      toast(rows.length + ' rows parsed from ' + file.name, 'success');
+      // Auto-generate batch label
+      var now = new Date();
+      var months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+      var autoBatch = document.getElementById('ubCity').value + '_' + months[now.getMonth()] + '_' + now.getFullYear() + '_1';
+      var batchEl = document.getElementById('ubBatch');
+      if(!batchEl.value) batchEl.value = autoBatch;
+
+    } catch(err) {
+      hideLoader();
+      toast('Failed to read file: ' + err.message, 'error');
+      console.error('File parse error:', err);
+    }
+  };
+
+  reader.onerror = function() {
+    hideLoader();
+    toast('Could not read file. Try again.', 'error');
+  };
+
+  if(ext === 'csv') {
+    reader.readAsText(file);
+  } else {
+    reader.readAsArrayBuffer(file);
+  }
+}
+
+function _mapFileRow(row, keys) {
+  // Try common ACT column name variants
+  function pick(candidates) {
+    for(var i=0;i<candidates.length;i++) {
+      var val = row[candidates[i]];
+      if(val && String(val).trim()) return String(val).trim();
+    }
+    return '';
+  }
+  return {
+    accountNo: pick([
+      'account_no','account_number','accountno','acc_no','account','acct_no','acct',
+      'caf_no','caf_number','cafno','customer_id','customerid','cust_id',
+      'subscriber_id','subscriberid','sub_id','connection_id','conn_id',
+    ]),
+    name: pick([
+      'name','customer_name','cust_name','subscriber_name','full_name',
+      'account_holder','holder_name','applicant_name','user_name',
+    ]),
+    mobile: pick([
+      'mobile','mobile_no','phone','phone_no','contact','contact_no','mob',
+      'mobile_number','cell','cell_no','alternate_no','alt_no','registered_mobile',
+    ]),
+    address: pick([
+      'address','addr','installation_address','full_address',
+      'billing_address','service_address','location_address','inst_addr',
+    ]),
+    area: pick([
+      'area','locality','zone','region','location','city_area',
+      'sector','ward','colony','service_area','installation_area',
+    ]),
+    fxCode: pick([
+      'fx_code','fxcode','fx','field_executive_code','executive_code','exc_code',
+      'fe_code','fecode','field_code','technician_code','tech_code','fe_id',
+      'executive_id','exc_id','field_exec_code',
+    ]),
+    srNumber: pick([
+      'sr_number','sr_no','service_request','sr','ticket_no','ticket',
+      'request_no','complaint_no','cr_no','work_order','wo_no',
+    ]),
+  };
+}
+
+async function doUploadBase() {
+  var batchNo = document.getElementById('ubBatch').value.trim();
+  var city    = document.getElementById('ubCity').value;
+
+  if(!batchNo) { toast('Enter batch label','error'); return; }
+  if(!_parsedRows.length) { toast('Attach a file first','error'); return; }
+
+  showLoader('Running pipeline... ('+_parsedRows.length+' rows)');
+  var res = await apiPost('upload_base', {
+    city:    city,
+    batchNo: batchNo,
+    rows:    _parsedRows,
+  });
+  hideLoader();
+
+  if(res.success) {
+    var d = res.data || {};
+    toast('Done — '+( d.workable||0)+' workable | '+(d.rejected||0)+' rejected | '+(d.duplicates||0)+' duplicates','success');
+    clearFile();
+    closeSheet();
+    loadOverview();
+    loadPending();
+  } else {
+    toast(res.error||'Pipeline failed','error');
+  }
+}
+
 </script>
 </body>
 </html>
