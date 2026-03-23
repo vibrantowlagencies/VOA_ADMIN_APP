@@ -686,9 +686,10 @@ function clearFile() {
   _parsedRows = [];
   document.getElementById('fileSelected').classList.remove('show');
   document.getElementById('ubFileInput').value = '';
+  document.getElementById('ubBatch').value = '';
   document.getElementById('ubRunBtn').disabled = true;
   document.getElementById('ubRunBtn').style.opacity = '.45';
-  document.getElementById('fileDropZone').style.display = 'block';
+  document.getElementById('fileDropZone').style.display = '';
 }
 
 function processUploadFile(file) {
@@ -703,6 +704,11 @@ function processUploadFile(file) {
     return;
   }
 
+  // Check XLSX library loaded (needed for .xlsx/.xls)
+  if((ext==='xlsx'||ext==='xls') && typeof XLSX==='undefined') {
+    toast('Excel parser loading, try again in 3 seconds','error');
+    return;
+  }
   showLoader('Reading file...');
   var reader = new FileReader();
 
@@ -712,7 +718,7 @@ function processUploadFile(file) {
       if(ext === 'csv') {
         var text  = e.target.result;
         var lines = text.split('\n').map(function(l){return l.split(',');});
-        var hdrs  = lines[0].map(function(h){return h.trim().toLowerCase().replace(/[^a-z0-9]/g,'_');});
+        var hdrs  = lines[0].map(function(h){return h.trim().toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'');});
         for(var i=1;i<lines.length;i++) {
           if(!lines[i].join('').trim()) continue;
           var row = {};
@@ -727,7 +733,8 @@ function processUploadFile(file) {
           // Normalise keys
           var norm = {};
           Object.keys(row).forEach(function(k){
-            norm[k.trim().toLowerCase().replace(/[^a-z0-9]/g,'_')] = String(row[k]||'').trim();
+            var nk = k.trim().toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'');
+            norm[nk] = String(row[k]||'').trim();
           });
           return _mapFileRow(norm, Object.keys(norm));
         });
@@ -735,6 +742,8 @@ function processUploadFile(file) {
 
       // Filter out completely empty rows
       rows = rows.filter(function(r){return r.accountNo && r.accountNo.length > 2;});
+      console.log('[Upload] Parsed rows sample:', rows.slice(0,2));
+      console.log('[Upload] Total valid rows:', rows.length);
 
       if(!rows.length) {
         hideLoader();
@@ -783,44 +792,67 @@ function processUploadFile(file) {
 }
 
 function _mapFileRow(row, keys) {
-  // Try common ACT column name variants
+  // Normalise a value — strip floats (.0) and whitespace
+  function clean(v) {
+    if(v===null||v===undefined) return '';
+    var s = String(v).trim();
+    // Remove trailing .0 from numeric strings (Excel stores numbers as floats)
+    if(/^\d+\.0$/.test(s)) s = s.slice(0,-2);
+    return s;
+  }
+  // Pick first matching column from candidates list
   function pick(candidates) {
     for(var i=0;i<candidates.length;i++) {
       var val = row[candidates[i]];
-      if(val && String(val).trim()) return String(val).trim();
+      if(val!==undefined && val!==null && String(val).trim()!=='' && String(val).trim()!=='0') {
+        return clean(val);
+      }
     }
     return '';
   }
   return {
     accountNo: pick([
-      'account_no','account_number','accountno','acc_no','account','acct_no','acct',
-      'caf_no','caf_number','cafno','customer_id','customerid','cust_id',
-      'subscriber_id','subscriberid','sub_id','connection_id','conn_id',
+      // ── ACTUAL ACT FIBER NET COLUMN NAMES ──
+      'account_no',          // 'Account No.' → exact ACT header
+      'account_number',
+      'accountno','acc_no','account','acct_no','acct',
+      'caf_no','caf_number','cafno',
+      'customer_id','customerid','cust_id',
+      'subscriber_id','subscriberid','sub_id',
+      'connection_id','conn_id',
     ]),
     name: pick([
-      'name','customer_name','cust_name','subscriber_name','full_name',
-      'account_holder','holder_name','applicant_name','user_name',
+      'name',                // exact ACT header
+      'customer_name','cust_name','subscriber_name',
+      'full_name','account_holder','holder_name','applicant_name',
     ]),
     mobile: pick([
-      'mobile','mobile_no','phone','phone_no','contact','contact_no','mob',
-      'mobile_number','cell','cell_no','alternate_no','alt_no','registered_mobile',
+      'mobile_no',           // 'Mobile No.' → exact ACT header
+      'mobile','phone','phone_no','contact','contact_no','mob',
+      'mobile_number','cell','cell_no','registered_mobile',
     ]),
     address: pick([
-      'address','addr','installation_address','full_address',
-      'billing_address','service_address','location_address','inst_addr',
+      'address_1',           // 'Address 1' → exact ACT header
+      'address','addr','address_2',
+      'installation_address','full_address',
+      'billing_address','service_address','location_address',
     ]),
     area: pick([
-      'area','locality','zone','region','location','city_area',
-      'sector','ward','colony','service_area','installation_area',
+      'area',                // exact ACT header
+      'locality','zone','region','location','city_area',
+      'sector','ward','colony','service_area',
     ]),
     fxCode: pick([
-      'fx_code','fxcode','fx','field_executive_code','executive_code','exc_code',
-      'fe_code','fecode','field_code','technician_code','tech_code','fe_id',
-      'executive_id','exc_id','field_exec_code',
+      'fx',                  // 'FX' → exact ACT header
+      'fx_name',             // 'FX Name' → fallback
+      'fx_code','fxcode',
+      'field_executive_code','executive_code','exc_code',
+      'fe_code','fecode','technician_code','tech_code',
     ]),
     srNumber: pick([
-      'sr_number','sr_no','service_request','sr','ticket_no','ticket',
-      'request_no','complaint_no','cr_no','work_order','wo_no',
+      'sr_number',           // 'SR Number' → exact ACT header
+      'sr_no','service_request','sr','ticket_no','ticket',
+      'request_no','complaint_no','cr_no',
     ]),
   };
 }
