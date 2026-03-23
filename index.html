@@ -568,7 +568,12 @@ function showErr(m){const e=document.getElementById('loginError');e.textContent=
 function startApp(){document.getElementById('loginScreen').style.display='none';document.getElementById('app').style.display='block';document.getElementById('headerBadge').textContent=session.staffId+' · '+session.city;document.getElementById('headerRole').textContent=session.role;buildTabs();loadOverview();loadPending();loadIssues();loadCoolingPool();
   if(session.role==='ADMIN'||session.role==='SUPERVISOR'||session.role==='OPS_MANAGER'){
     loadAdminPerf('mtd');
-  }}
+  }
+  // v1.6.2: merged from patch — no more double startApp definition
+  _showCityToggle();
+  _activeCity = session.city || 'CBE';
+  loadAllocStatus();
+}
 function buildTabs(){const role=session.role;const tabs=[{id:'overview',label:'Overview',page:'pageOverview'}];if(role==='ADMIN'){tabs.push({id:'staff',label:'Staff',page:'pageStaff'});tabs.push({id:'assign',label:'Assign',page:'pageAssign'});}if(role==='SUPERVISOR'){tabs.push({id:'assign',label:'Reassign',page:'pageAssign'});tabs.push({id:'team',label:'Team',page:'pageTeam'});}tabs.push({id:'pending',label:'Pending',page:'pagePending'});tabs.push({id:'issues',label:'Issues',page:'pageIssues'});tabs.push({id:'cooling',label:'Cooling Pool',page:'pageCooling'});
   if(role==='ADMIN'||role==='SUPERVISOR'||role==='OPS_MANAGER'){
     tabs.push({id:'performance',label:'Team Perf',page:'pagePerformance'});
@@ -633,13 +638,17 @@ document.getElementById('loginPin').addEventListener('keyup',e=>{if(e.key==='Ent
     // Valid session — restore and skip login
     session = saved;
     console.log('[Session] Restored for', session.staffId);
-    if (typeof startApp === 'function') {
-      startApp();
-    } else if (typeof initApp === 'function') {
-      initApp();
+    // v1.6.2: wrap startApp in try-catch so stale session never blocks login screen
+    try {
+      if (typeof startApp === 'function') startApp();
+    } catch(appErr) {
+      console.warn('[Session] startApp failed on restore, clearing session:', appErr.message);
+      localStorage.removeItem("voa_session_admin");
+      session = null;
     }
   } catch(e) {
     console.warn('[Session] Restore failed:', e.message);
+    try { localStorage.removeItem("voa_session_admin"); } catch(e2) {}
   }
 })();
 
@@ -1165,14 +1174,7 @@ function _renderAllocBreakdown(breakdown) {
   wrap.style.display = 'block';
 }
 
-// ── PATCH startApp to show city toggle and load alloc status ─
-var _origStartApp = startApp;
-function startApp() {
-  _origStartApp();
-  _showCityToggle();
-  _activeCity = session.city || 'CBE';
-  loadAllocStatus();
-}
+// v1.6.2: startApp patch removed — merged into original startApp below
 
 </script>
 </body>
