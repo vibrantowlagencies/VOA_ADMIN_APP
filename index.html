@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>VOA Admin Panel v1.6.0</title>
+<title>VOA Admin Panel v2.0.2</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
 function autoUpdateBatchLabel() {
   var batchEl = document.getElementById('ubBatch');
@@ -141,6 +141,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .toast.show{transform:translateX(-50%) translateY(0);}
 .toast.success{background:var(--green);}
 .toast.error{background:var(--red);}
+.toast.warning{background:var(--amber);color:#fff;}
 .empty-state{text-align:center;padding:48px 20px;}
 .empty-icon{font-size:44px;margin-bottom:10px;opacity:.35;}
 .empty-text{font-size:15px;color:var(--text2);font-weight:600;}
@@ -167,6 +168,21 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .file-selected.show{display:flex;align-items:center;gap:10px;}
 .file-name{font-size:13px;font-weight:600;color:var(--green);flex:1;}
 .file-rows{font-size:11px;color:var(--text3);font-family:var(--font-mono);}
+
+
+/* ── ALLOCATION ENGINE v2.0.0 ── */
+.alloc-mode-bar{display:flex;gap:6px;margin-bottom:14px;background:var(--bg3);border-radius:14px;padding:5px;}
+.alloc-mode-btn{flex:1;padding:10px 6px;border-radius:10px;border:none;font-family:var(--font-head);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;color:var(--text3);background:transparent;}
+.alloc-mode-btn.active{background:var(--accent);color:#fff;}
+.alloc-stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+.alloc-stat{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:12px;text-align:center;box-shadow:var(--shadow-sm);}
+.alloc-stat-val{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--accent);}
+.alloc-stat-lbl{font-size:9px;color:var(--text3);margin-top:2px;}
+.alloc-breakdown-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);}
+.alloc-breakdown-row:last-child{border-bottom:none;}
+.city-toggle-wrap{display:flex;gap:0;border-radius:10px;overflow:hidden;border:1.5px solid var(--accent);height:32px;}
+.city-toggle-btn{min-width:44px;padding:0 12px;border:none;font-family:var(--font-head);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;background:transparent;color:var(--accent);}
+.city-toggle-btn.active{background:var(--accent);color:#fff;}
 
 </style>
 </head>
@@ -196,6 +212,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
       <div class="staff-badge" id="headerBadge">AD_000</div>
+      <div class="city-toggle-wrap" id="headerCityToggle" style="display:none;">
+        <button class="city-toggle-btn active" id="cityBtnCBE" onclick="switchCity('CBE')">CBE</button>
+        <button class="city-toggle-btn"        id="cityBtnCHN" onclick="switchCity('CHN')">CHN</button>
+      </div>
       <button class="logout-btn" onclick="doLogout()">&#x2715;</button>
     </div>
   </div>
@@ -221,27 +241,93 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
       <div class="action-card" onclick="openSheet('createStaffSheet')"><div class="action-icon">&#10133;</div><div class="action-label">Add Staff</div><div class="action-sub">Create new account</div></div>
       <div class="action-card" onclick="openSheet('resetPinSheet')"><div class="action-icon">&#128273;</div><div class="action-label">Reset PIN</div><div class="action-sub">Change staff PIN</div></div>
       <div class="action-card" onclick="openSheet('toggleStaffSheet')"><div class="action-icon">&#128260;</div><div class="action-label">Toggle Active</div><div class="action-sub">Enable / disable</div></div>
-      <div class="action-card" onclick="loadStaffList()"><div class="action-icon">&#128101;</div><div class="action-label">View All Staff</div><div class="action-sub">Refresh list</div></div>
     </div>
     <div class="sub-label">All Staff</div>
     <div class="search-wrap"><div class="search-box"><span style="color:var(--text3);font-size:15px;">&#128269;</span><input class="search-input" id="staffSearch" placeholder="Search ID / name / role..." oninput="renderStaffList()"></div></div>
     <div id="staffList"><div class="empty-state"><div class="empty-icon">&#128101;</div><div class="empty-text">Loading staff...</div></div></div>
   </div>
   <div class="tab-page" id="pageAssign">
-    <div class="section-title">Assign &amp; Dispatch</div>
-    <div class="section-sub">Batch upload, TC assignment, exec area mapping</div>
-    <div class="action-grid">
-      <div class="action-card" onclick="openSheet('uploadBaseSheet')"><div class="action-icon">&#128228;</div><div class="action-label">Upload Base</div><div class="action-sub">New ACT data batch</div></div>
-      <div class="action-card" onclick="openSheet('assignTCSheet')"><div class="action-icon">&#127919;</div><div class="action-label">Assign Telecaller</div><div class="action-sub">Account to TC</div></div>
-      <div class="action-card" onclick="openSheet('autoAssignSheet')"><div class="action-icon">&#128506;&#65039;</div><div class="action-label">Auto Assign Execs</div><div class="action-sub">Area-wise mapping</div></div>
-      <div class="action-card" onclick="openSheet('batchSheet')"><div class="action-icon">&#128203;</div><div class="action-label">Batch Info</div><div class="action-sub">View current batches</div></div>
+    <!-- ── SMART ALLOCATION ENGINE (v2.0.0) ── -->
+    <div class="section-title">Smart Allocation</div>
+    <div class="section-sub">Upload base → system auto-distributes to team</div>
+
+    <!-- Mode Toggle -->
+    <div class="alloc-mode-bar">
+      <button class="alloc-mode-btn active" id="modeBtnAuto"   onclick="setAllocMode('AUTO')">&#9889; AUTO MODE</button>
+      <button class="alloc-mode-btn"        id="modeBtnManual" onclick="setAllocMode('MANUAL')">&#9997;&#65039; MANUAL MODE</button>
     </div>
-    <div class="sub-label">Quick Reassign</div>
-    <div class="data-row" style="flex-direction:column;align-items:stretch;gap:10px;">
-      <div class="field-label">Account Number</div><input class="field-input" id="reassignAccNo" placeholder="e.g. ACT001234" style="margin-bottom:4px;">
-      <div class="field-label">Reassign To (Staff ID)</div><input class="field-input" id="reassignTo" placeholder="e.g. TC_002 or EX_003" style="margin-bottom:4px;">
-      <div class="field-label">Reason</div><input class="field-input" id="reassignReason" placeholder="Why reassigning?">
-      <button class="btn-primary" onclick="doReassign()" style="margin-top:4px;">Reassign Account</button>
+
+    <!-- Status Strip -->
+    <div class="alloc-stat-row">
+      <div class="alloc-stat"><div class="alloc-stat-val" id="allocTotal">&#8212;</div><div class="alloc-stat-lbl">Total</div></div>
+      <div class="alloc-stat"><div class="alloc-stat-val" id="allocTCDone" style="color:var(--accent);">&#8212;</div><div class="alloc-stat-lbl">TC Assigned</div></div>
+      <div class="alloc-stat"><div class="alloc-stat-val" id="allocExecDone" style="color:var(--cyan);">&#8212;</div><div class="alloc-stat-lbl">Exec Assigned</div></div>
+      <div class="alloc-stat"><div class="alloc-stat-val" id="allocPending" style="color:var(--amber);">&#8212;</div><div class="alloc-stat-lbl">Unassigned</div></div>
+    </div>
+
+    <!-- Primary Actions -->
+    <div class="action-grid" style="margin-bottom:10px;">
+      <div class="action-card" onclick="openSheet('uploadBaseSheet')">
+        <div class="action-icon">&#128228;</div>
+        <div class="action-label">Upload Base</div>
+        <div class="action-sub">ACT Excel/CSV file</div>
+      </div>
+      <div class="action-card" id="cardAutoTC" onclick="doAutoAllocTC()" style="border-color:var(--accent);">
+        <div class="action-icon">&#9889;</div>
+        <div class="action-label">Auto Allocate TCs</div>
+        <div class="action-sub">Load-balanced distribution</div>
+      </div>
+      <div class="action-card" id="cardAutoExec" onclick="doAutoAllocExec()" style="border-color:var(--cyan);">
+        <div class="action-icon">&#127936;</div>
+        <div class="action-label">Auto Allocate Execs</div>
+        <div class="action-sub">Multi-exec load balance</div>
+      </div>
+      <div class="action-card" onclick="loadAllocStatus()">
+        <div class="action-icon">&#128257;</div>
+        <div class="action-label">Refresh Status</div>
+        <div class="action-sub">Update allocation stats</div>
+      </div>
+    </div>
+
+    <!-- Breakdown panel (shown after allocation) -->
+    <div id="allocBreakdownWrap" style="display:none;background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px;">
+      <div class="sub-label" style="margin-bottom:8px;">TC Load Breakdown</div>
+      <div id="allocBreakdown"></div>
+    </div>
+
+    <!-- Manual Override Panel -->
+    <div id="manualModePanel" style="display:none;">
+      <div class="divider"></div>
+      <div class="sub-label">Manual Assignment (Override)</div>
+      <div class="action-grid">
+        <div class="action-card" onclick="openSheet('assignTCSheet')">
+          <div class="action-icon">&#128222;</div>
+          <div class="action-label">Bulk Assign TC</div>
+          <div class="action-sub">Batch to specific TC</div>
+        </div>
+        <div class="action-card" onclick="openSheet('autoAssignSheet')">
+          <div class="action-icon">&#128506;&#65039;</div>
+          <div class="action-label">Legacy Exec Assign</div>
+          <div class="action-sub">FX area mapping</div>
+        </div>
+      </div>
+      <div class="sub-label" style="margin-top:10px;">Quick Reassign</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <input class="field-input" id="reassignAccNo" placeholder="Account Number">
+        <input class="field-input" id="reassignTo"    placeholder="Reassign To (Staff ID e.g. TC_002)">
+        <input class="field-input" id="reassignReason" placeholder="Reason">
+        <button class="btn-primary" onclick="doReassign()">Reassign Account</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="sub-label">FX Code → Exec Map</div>
+    <div class="action-grid">
+      <div class="action-card" onclick="openSheet('areaMapSheet')">
+        <div class="action-icon">&#128205;</div>
+        <div class="action-label">Edit Area Map</div>
+        <div class="action-sub">Override exec assignment</div>
+      </div>
     </div>
   </div>
   <div class="tab-page" id="pagePending">
@@ -282,7 +368,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
     <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px;" id="cpCount"></div>
     <div id="coolingList"><div class="empty-state"><div class="empty-icon">&#129398;</div><div class="empty-text">Loading...</div></div></div>
   </div>
-  <!-- ── PERFORMANCE TAB (v1.6.0) ── -->
+  <!-- ── PERFORMANCE TAB (v2.0.0) ── -->
   <div class="tab-page" id="pagePerformance">
     <div class="section-title">Team Performance</div>
     <div class="section-sub">Live MTD stats for all telecallers and executives</div>
@@ -357,6 +443,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
     </div>
     <div class="field-group" style="margin-top:12px;"><label class="field-label">Batch Label</label><input class="field-input" id="ubBatch" placeholder="e.g. CBE_APR_2026_1"></div>
     <div class="field-group"><label class="field-label">City</label><select class="field-select" id="ubCity" onchange="autoUpdateBatchLabel()"><option value="CBE">Coimbatore (CBE)</option><option value="CHN">Chennai (CHN)</option></select></div>
+    <!-- v1.6.2: BUG-05 — Upload mode selector -->
+    <div class="field-group" style="margin-top:4px;">
+      <label class="field-label">Upload Mode</label>
+      <div class="alloc-mode-bar" style="margin-bottom:6px;">
+        <button class="alloc-mode-btn active" id="modeBtnReplace" onclick="setUploadMode('REPLACE')">&#128260; Replace</button>
+        <button class="alloc-mode-btn"        id="modeBtnAppend"  onclick="setUploadMode('APPEND')">&#10133; Append</button>
+      </div>
+      <p style="font-size:11px;color:var(--text3);line-height:1.5;" id="uploadModeHint">Replace: existing unworked accounts are deleted before new data is written. You will be asked to confirm.</p>
+    </div>
     <button class="btn-primary" id="ubRunBtn" onclick="doUploadBase()" disabled style="opacity:.45;">&#9654; Run Pipeline</button>
     <p style="font-size:11px;color:var(--text3);margin-top:10px;text-align:center;">Duplicates + accounts in Historic Memory filtered automatically</p>
   </div>
@@ -401,11 +496,35 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 </div>
 <script>
 // ============================================================
-// FILE    : Admin_App_v1.6.0.html
+// FILE    : Admin_App_v2.0.2.html
+// Version : 2.0.2
+// Updated : 2026-03-23
+// Changes :
+//   v2.0.2 - BUG-01: autoAllocate flag now passed to upload_base API
+//            - BUG-02: TC/exec allocation failures shown as warnings after upload
+//            - BUG-03: Unmapped FX codes shown in warning toast after upload
+//            - BUG-05: Upload mode toggle (Replace / Append) added
+//              + REPLACE requires confirmation before running
+//              + APPEND dedup validated against existing clean rows
+//   v2.0.1 - Staff tab cleanup (View All Staff card removed)
+//   v2.0.0 - Smart Allocation Engine
+//            - AUTO MODE: auto-distribute TCs + Execs after upload
+//            - MANUAL MODE: bulk assign with override
+//            - Allocation status strip (total/TC/exec/unassigned)
+//            - TC load breakdown chart
+//            - City toggle (CBE/CHN) — view filter only
+//   v1.6.0 - File attachment for Upload Base
+//            - Team Performance tab
+//   v1.5.3 - Session persistence (back button fix)
+//   v1.5.2 - Cooling Pool tab, purple theme
+// ============================================================
+
+// ============================================================
+// FILE    : Admin_App_v2.0.0.html
 // Version : 1.6.0
 // Updated : 2026-03-23
 // Changes :
-//   v1.6.0 - File attachment for Upload Base
+//   v2.0.0 - File attachment for Upload Base
 //            - Drag & drop or tap to attach .xlsx/.xls/.csv
 //            - XLSX.js parses file in browser
 //            - Supports all common ACT column name variants
@@ -424,11 +543,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 // ============================================================
 
 // ============================================================
-// FILE    : Admin_App_v1.6.0.html
+// FILE    : Admin_App_v2.0.0.html
 // Version : 1.5.3
 // Updated : 2026-03-22
 // Changes :
-//   v1.6.0 - Session persistence added
+//   v2.0.0 - Session persistence added
 //            - Login session saved to localStorage
 //            - Back button / page refresh no longer logs out
 //            - Token expiry auto-checked on restore
@@ -455,16 +574,16 @@ function buildTabs(){const role=session.role;const tabs=[{id:'overview',label:'O
     tabs.push({id:'performance',label:'Team Perf',page:'pagePerformance'});
   }document.getElementById('tabNav').innerHTML=tabs.map((t,i)=>'<button class="tab-btn '+(i===0?'active':'')+'" id="tabBtn_'+t.id+'" data-tid="'+t.id+'" data-page="'+t.page+'">'+t.label+'</button>').join('');document.getElementById('tabNav').querySelectorAll('[data-tid]').forEach(function(b){b.addEventListener('click',function(){switchTab(this.dataset.tid,this.dataset.page);});});document.getElementById('pageOverview').classList.add('active');if(role==='ADMIN')loadStaffList();if(role==='SUPERVISOR')loadTeamPerf();}
 function switchTab(id,pageId){document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.tab-page').forEach(p=>p.classList.remove('active'));document.getElementById('tabBtn_'+id).classList.add('active');document.getElementById(pageId).classList.add('active');}
-async function loadOverview(){const res=await api({action:'get_overview',city:session.city});if(res.success){const d=res.data;document.getElementById('ovTotal').textContent=(d.pending||0)+(d.collected||0);document.getElementById('ovCollected').textContent=d.collected||0;document.getElementById('ovPending').textContent=d.pending||0;document.getElementById('ovIssues').textContent=d.issues||0;document.getElementById('ovCalls').textContent=d.calls||0;document.getElementById('ovAppts').textContent=d.appts||0;renderAlerts(d.alerts||[]);}}
+async function loadOverview(){const res=await api({action:'get_overview',city:_activeCity||session.city});if(res.success){const d=res.data;document.getElementById('ovTotal').textContent=(d.pending||0)+(d.collected||0);document.getElementById('ovCollected').textContent=d.collected||0;document.getElementById('ovPending').textContent=d.pending||0;document.getElementById('ovIssues').textContent=d.issues||0;document.getElementById('ovCalls').textContent=d.calls||0;document.getElementById('ovAppts').textContent=d.appts||0;renderAlerts(d.alerts||[]);}}
 function renderAlerts(alerts){const el=document.getElementById('alertsList');if(!alerts.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">&#9989;</div><div class="empty-text">No active alerts</div></div>';return;}const colors={red:['var(--red-lt)','var(--red)','#fecaca'],amber:['var(--amber-lt)','var(--amber)','#fde68a'],blue:['var(--blue-lt)','var(--blue)','#93c5fd']};el.innerHTML=alerts.map(a=>{var c=colors[a.type]||colors.blue;return'<div style="background:'+c[0]+';border:1px solid '+c[2]+';border-radius:12px;padding:14px 16px;margin-bottom:8px;"><div style="font-size:14px;font-weight:700;color:'+c[1]+';font-family:var(--font-head);margin-bottom:2px;">'+a.title+'</div><div style="font-size:12px;color:var(--text2);">'+a.sub+'</div></div>';}).join('');}
 async function loadStaffList(){showLoader('Loading staff...');const res=await api({action:'get_staff',city:session.city});hideLoader();allStaff=res.success?(res.data||[]):demoStaff();renderStaffList();}
 function renderStaffList(){var q=(document.getElementById('staffSearch').value||'').toLowerCase();var list=allStaff.filter(s=>!q||(s.staffId+' '+s.staffName+' '+s.role).toLowerCase().includes(q));var el=document.getElementById('staffList');if(!list.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">&#128101;</div><div class="empty-text">No staff found</div></div>';return;}el.innerHTML=list.map(s=>'<div class="data-row"><div style="flex:1;"><div class="data-row-title">'+(s.staffName||s.staffId)+' <span style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">'+s.staffId+'</span></div><div class="data-row-sub">'+(s.city||'')+(s.area?' &middot; '+s.area:'')+'</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><span class="data-row-badge '+roleBadge(s.role)+'">'+s.role+'</span><span class="data-row-badge '+(s.active?'badge-active':'badge-inactive')+'">'+(s.active?'ACTIVE':'INACTIVE')+'</span></div></div>').join('');}
 function roleBadge(r){return({TELECALLER:'badge-tc',EXECUTIVE:'badge-exec',SUPERVISOR:'badge-sv',ADMIN:'badge-admin',OPS_MANAGER:'badge-om'})[r]||'badge-admin';}
-async function loadPending(){const res=await api({action:'get_pending',city:session.city});allPending=res.success?(res.data||[]):demoPending();renderPendingList();}
+async function loadPending(){const res=await api({action:'get_pending',city:_activeCity||session.city});allPending=res.success?(res.data||[]):demoPending();renderPendingList();}
 function renderPendingList(){var q=(document.getElementById('pendingSearch')?document.getElementById('pendingSearch').value:'').toLowerCase();var list=allPending.filter(p=>!q||(p.accountNo+' '+p.name+' '+p.area).toLowerCase().includes(q));document.getElementById('pendingCount').textContent=list.length+' pending account'+(list.length!==1?'s':'');var el=document.getElementById('pendingList');if(!list.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">&#9203;</div><div class="empty-text">No pending accounts</div></div>';return;}el.innerHTML=list.map(p=>{var days=p.agingDays||0;var ag=days>=7?'aging-crit':days>=3?'aging-warn':'aging-ok';return'<div class="issue-card '+(days>=7?'aged':'')+'"><div class="issue-card-top"><div><div class="issue-accno">'+p.accountNo+'</div><div class="issue-name">'+(p.name||'&#8212;')+'</div></div><span class="aging-badge '+ag+'">'+days+'d old</span></div><div class="issue-meta">&#128205; '+(p.area||'&#8212;')+' &nbsp;&middot;&nbsp; TC: '+(p.telecallerStaffId||'&#8212;')+' &nbsp;&middot;&nbsp; EX: '+(p.executiveStaffId||'&#8212;')+' &nbsp;&middot;&nbsp; Strikes: '+(p.strikeCount||0)+'</div>'+(p.status?'<div style="margin-top:6px;"><span style="font-size:10px;padding:3px 8px;border-radius:20px;background:var(--accent-lt);color:var(--accent);font-family:var(--font-mono);font-weight:600;">'+p.status+'</span></div>':'')+'</div>';}).join('');}
-async function loadIssues(){const res=await api({action:'get_issues',city:session.city});allIssues=res.success?(res.data||[]):demoIssues();renderIssuesList();}
+async function loadIssues(){const res=await api({action:'get_issues',city:_activeCity||session.city});allIssues=res.success?(res.data||[]):demoIssues();renderIssuesList();}
 function renderIssuesList(){document.getElementById('issuesCount').textContent=allIssues.length+' open issue'+(allIssues.length!==1?'s':'');var el=document.getElementById('issuesList');if(!allIssues.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">&#9989;</div><div class="empty-text">No open issues</div></div>';return;}el.innerHTML=allIssues.map(i=>'<div class="issue-card '+((i.agingDays||0)>=5?'aged':'')+'"><div class="issue-card-top"><div><div class="issue-accno">'+i.accountNo+'</div><div class="issue-name">'+(i.name||'&#8212;')+'</div></div><span style="font-size:10px;padding:3px 9px;border-radius:20px;background:var(--accent-lt);color:var(--text2);border:1px solid var(--border2);font-family:var(--font-mono);font-weight:600;">'+(i.issueType||'?')+'</span></div><div class="issue-meta">&#128205; '+(i.area||'&#8212;')+' &nbsp;&middot;&nbsp; Raised: '+(i.dateRaised||'&#8212;')+' &nbsp;&middot;&nbsp; '+(i.agingDays||0)+'d ago</div></div>').join('');}
-async function loadTeamPerf(){const res=await api({action:'get_leaderboard',city:session.city});if(res.success&&res.data){renderTCPerf(res.data.telecallers||[]);renderExecPerf(res.data.executives||[]);}else{renderTCPerf(demoTCPerf());renderExecPerf(demoExecPerf());}}
+async function loadTeamPerf(){const res=await api({action:'get_leaderboard',city:_activeCity||session.city});if(res.success&&res.data){renderTCPerf(res.data.telecallers||[]);renderExecPerf(res.data.executives||[]);}else{renderTCPerf(demoTCPerf());renderExecPerf(demoExecPerf());}}
 function renderTCPerf(list){var el=document.getElementById('tcPerfList');if(!list.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">&#128222;</div><div class="empty-text">No data</div></div>';return;}el.innerHTML=list.map(t=>{var pct=Math.min(100,Math.round(((t.closures||0)/30)*100));return'<div class="data-row" style="flex-direction:column;align-items:stretch;gap:8px;"><div style="display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:14px;font-weight:600;color:var(--text);">'+(t.staffName||t.staffId)+'</div><div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">'+t.staffId+'</div></div><div style="text-align:right;"><div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--accent);">'+(t.closures||0)+'</div><div style="font-size:10px;color:var(--text3);">closures</div></div></div><div style="background:var(--bg3);border-radius:4px;height:6px;overflow:hidden;"><div style="height:100%;width:'+pct+'%;background:var(--accent);border-radius:4px;transition:width .6s;"></div></div><div style="display:flex;gap:12px;font-size:11px;color:var(--text3);font-family:var(--font-mono);"><span>Calls: <b style="color:var(--text);">'+(t.calls||0)+'</b></span><span>Appts: <b style="color:var(--green);">'+(t.appts||0)+'</b></span><span>Target: 30 ('+pct+'%)</span></div></div>';}).join('');}
 function renderExecPerf(list){var el=document.getElementById('execPerfList');if(!list.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">&#128692;</div><div class="empty-text">No data</div></div>';return;}el.innerHTML=list.map((e,idx)=>'<div class="data-row"><div style="display:flex;align-items:center;gap:10px;flex:1;"><div style="width:28px;height:28px;border-radius:50%;background:var(--accent-lt);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:13px;font-weight:800;color:var(--accent);">'+(idx+1)+'</div><div><div style="font-size:14px;font-weight:600;color:var(--text);">'+(e.staffName||e.staffId)+'</div><div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">'+e.staffId+'</div></div></div><div style="text-align:right;"><div style="font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--green);">'+(e.collected||0)+'</div><div style="font-size:10px;color:var(--text3);">collected</div></div></div>').join('');}
 async function loadCoolingPool(){var el=document.getElementById('coolingList'),state=document.getElementById('cpStateFilter').value;el.innerHTML='<div class="empty-state"><div class="empty-icon">&#129398;</div><div class="empty-text">Loading...</div></div>';var params={action:'get_cooling_pool',city:session.city};if(state!=='ALL')params.state=state;var res=await api(params);_coolingData=res.success?(res.data||[]):[];renderCoolingList();updateCoolingSummary();}
@@ -551,7 +670,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ══════════════════════════════════════════════════════════
-// TEAM PERFORMANCE MODULE (v1.6.0)
+// TEAM PERFORMANCE MODULE (v2.0.0)
 // ══════════════════════════════════════════════════════════
 var _perfPeriod = 'mtd';
 
@@ -666,7 +785,7 @@ function renderAdminExecPerf(list) {
 }
 
 // ══════════════════════════════════════════════════════════
-// FILE ATTACHMENT MODULE (v1.6.0)
+// FILE ATTACHMENT MODULE (v2.0.0)
 // ══════════════════════════════════════════════════════════
 var _parsedRows = [];
 
@@ -864,17 +983,39 @@ async function doUploadBase() {
   if(!batchNo) { toast('Enter batch label','error'); return; }
   if(!_parsedRows.length) { toast('Attach a file first','error'); return; }
 
+  // v1.6.2: BUG-05 — confirm before REPLACE to prevent accidental data loss
+  if (_uploadMode === 'REPLACE') {
+    if (!confirm('⚠️ REPLACE mode: existing unworked accounts in TC_Base_Clean will be deleted.\n\nContinue?')) return;
+  }
+
   showLoader('Running pipeline... ('+_parsedRows.length+' rows)');
   var res = await apiPost('upload_base', {
-    city:    city,
-    batchNo: batchNo,
-    rows:    _parsedRows,
+    city:         city,
+    batchNo:      batchNo,
+    rows:         _parsedRows,
+    autoAllocate: (_allocMode === 'AUTO'),  // v1.6.2: BUG-01 — pass alloc mode to backend
+    mode:         _uploadMode,              // v1.6.2: BUG-05 — APPEND or REPLACE
   });
   hideLoader();
 
   if(res.success) {
     var d = res.data || {};
-    toast('Done — '+( d.workable||0)+' workable | '+(d.rejected||0)+' rejected | '+(d.duplicates||0)+' duplicates','success');
+    toast('Done — '+(d.workable||0)+' workable | '+(d.rejected||0)+' rejected ['+_uploadMode+']','success');
+
+    // v1.6.2: BUG-02 — warn if TC auto-allocation failed silently
+    if (d.allocationMode === 'AUTO' && !d.tcAllocated) {
+      setTimeout(function(){
+        toast('⚠️ TC allocation failed — '+(d.tcError||'no active telecallers. Run Auto Allocate manually.'),'warning');
+      }, 1200);
+    }
+
+    // v1.6.2: BUG-03 — warn if exec FX codes are unmapped
+    if (d.execSkipped > 0 && d.unmappedFxCodes && d.unmappedFxCodes.length) {
+      setTimeout(function(){
+        toast('⚠️ '+d.execSkipped+' accounts skipped. Unmapped FX: '+d.unmappedFxCodes.join(', '),'warning');
+      }, 2400);
+    }
+
     clearFile();
     closeSheet();
     loadOverview();
@@ -882,6 +1023,155 @@ async function doUploadBase() {
   } else {
     toast(res.error||'Pipeline failed','error');
   }
+}
+
+
+// ══════════════════════════════════════════════════════════
+// SMART ALLOCATION ENGINE — Admin App v2.0.0
+// ══════════════════════════════════════════════════════════
+
+var _allocMode     = 'AUTO';
+var _uploadMode    = 'REPLACE';  // v1.6.2: BUG-05 — controls APPEND vs REPLACE on upload
+var _activeCity    = session ? session.city : 'CBE';
+
+// ── UPLOAD MODE TOGGLE (v1.6.2) ──────────────────────────
+function setUploadMode(mode) {
+  _uploadMode = mode;
+  document.getElementById('modeBtnReplace').classList.toggle('active', mode === 'REPLACE');
+  document.getElementById('modeBtnAppend').classList.toggle('active',  mode === 'APPEND');
+  var hint = document.getElementById('uploadModeHint');
+  if (hint) {
+    hint.textContent = mode === 'REPLACE'
+      ? 'Replace: existing unworked accounts are deleted before new data is written. You will be asked to confirm.'
+      : 'Append: new accounts are added below existing data. Duplicates are rejected automatically.';
+  }
+}
+
+// ── CITY TOGGLE ──────────────────────────────────────────
+function switchCity(city) {
+  _activeCity = city;
+  session.city = city;
+
+  // Update toggle buttons
+  ['CBE','CHN'].forEach(function(c) {
+    var btn = document.getElementById('cityBtn'+c);
+    if(btn) btn.classList.toggle('active', c===city);
+  });
+
+  // Update header badge
+  var badge = document.getElementById('headerBadge');
+  if(badge) badge.textContent = session.staffId + ' · ' + city;
+
+  // Reload all data for new city
+  showLoader('Switching to ' + city + '...');
+  Promise.all([
+    loadOverview(),
+    loadPending(),
+    loadIssues(),
+    loadCoolingPool(),
+    loadAllocStatus(),
+  ]).then(function(){ hideLoader(); });
+
+  toast('Viewing ' + city + ' data', 'success');
+}
+
+// Show city toggle after login
+function _showCityToggle() {
+  var el = document.getElementById('headerCityToggle');
+  if(el) el.style.display = 'flex';
+}
+
+// ── ALLOCATION MODE TOGGLE ────────────────────────────────
+function setAllocMode(mode) {
+  _allocMode = mode;
+  document.getElementById('modeBtnAuto').classList.toggle('active',   mode==='AUTO');
+  document.getElementById('modeBtnManual').classList.toggle('active', mode==='MANUAL');
+  document.getElementById('manualModePanel').style.display = mode==='MANUAL' ? 'block' : 'none';
+
+  var autoCards = ['cardAutoTC','cardAutoExec'];
+  autoCards.forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.style.opacity = mode==='AUTO' ? '1' : '0.45';
+  });
+}
+
+// ── ALLOCATION STATUS ─────────────────────────────────────
+async function loadAllocStatus() {
+  var res = await api({ action:'get_allocation_status', city: _activeCity });
+  if(!res.success) return;
+  var d = res.data || {};
+  document.getElementById('allocTotal').textContent    = d.total         || 0;
+  document.getElementById('allocTCDone').textContent   = d.tcAssigned    || 0;
+  document.getElementById('allocExecDone').textContent = d.execAssigned  || 0;
+  document.getElementById('allocPending').textContent  = d.tcUnassigned  || 0;
+}
+
+// ── AUTO ALLOCATE TELECALLERS ─────────────────────────────
+async function doAutoAllocTC() {
+  if(_allocMode !== 'AUTO') {
+    toast('Switch to AUTO MODE first', 'error'); return;
+  }
+  showLoader('Distributing accounts across TCs...');
+  var res = await apiPost('auto_allocate_tc', {
+    city:   _activeCity,
+    cities: ['CBE','CHN'],  // TCs work across all cities
+  });
+  hideLoader();
+  if(res.success) {
+    var d = res.data;
+    toast(d.message || (d.assigned + ' accounts allocated to ' + d.tcCount + ' TCs'), 'success');
+    _renderAllocBreakdown(d.breakdown || {});
+    loadAllocStatus();
+  } else {
+    toast(res.error || 'TC allocation failed', 'error');
+  }
+}
+
+// ── AUTO ALLOCATE EXECUTIVES ──────────────────────────────
+async function doAutoAllocExec() {
+  showLoader('Assigning execs by FX area...');
+  var res = await apiPost('auto_allocate_exec', { city: _activeCity });
+  hideLoader();
+  if(res.success) {
+    var d = res.data;
+    toast(d.message || (d.assigned + ' accounts assigned to executives'), 'success');
+    loadAllocStatus();
+  } else {
+    toast(res.error || 'Exec allocation failed', 'error');
+  }
+}
+
+function _renderAllocBreakdown(breakdown) {
+  var wrap = document.getElementById('allocBreakdownWrap');
+  var el   = document.getElementById('allocBreakdown');
+  if(!wrap||!el) return;
+
+  var keys = Object.keys(breakdown);
+  if(!keys.length) { wrap.style.display='none'; return; }
+
+  var max = Math.max.apply(null, keys.map(function(k){return breakdown[k]||0;})) || 1;
+
+  el.innerHTML = keys.map(function(k) {
+    var count = breakdown[k] || 0;
+    var pct   = Math.round((count/max)*100);
+    return '<div class="alloc-breakdown-row">'
+      +'<span style="font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--text);min-width:70px;">'+k+'</span>'
+      +'<div style="flex:1;margin:0 10px;background:var(--bg3);border-radius:4px;height:8px;overflow:hidden;">'
+      +'<div style="width:'+pct+'%;height:100%;background:var(--accent);border-radius:4px;transition:width .5s;"></div>'
+      +'</div>'
+      +'<span style="font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--accent);min-width:28px;text-align:right;">'+count+'</span>'
+      +'</div>';
+  }).join('');
+  wrap.style.display = 'block';
+}
+
+// ── PATCH startApp to show city toggle and load alloc status ─
+var _origStartApp = startApp;
+function startApp() {
+  _origStartApp();
+  _showCityToggle();
+  _activeCity = session.city || 'CBE';
+  loadAllocStatus();
 }
 
 </script>
